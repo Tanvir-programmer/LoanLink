@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@plugin "daisyui";
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-primary: #1a73e8;
+  --color-secondary: teal;
+}
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap");
+body {
+  background: #f5f8ff;
+  font-family: "Source Code Pro", monospace;
+}
