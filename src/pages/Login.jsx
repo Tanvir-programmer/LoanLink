@@ -11,7 +11,14 @@ const Login = () => {
 
         <label className="label">Password</label>
         <input type="password" className="input" placeholder="Password" />
-
+        <div className="text-center mt-2 ">
+          <button
+            type="button"
+            className="text-sm text-indigo-600 hover:underline "
+          >
+            Forgot Password?
+          </button> 
+        </div>
         <button className="btn btn-primary my-3">Login</button>
         <button
           type="button"
