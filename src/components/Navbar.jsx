@@ -181,7 +181,7 @@ const Navbar = () => {
           </li>
           <li>
             <NavLink
-              to="/loans"
+              to="/allloans"
               className={getNavLinkClass}
               onClick={() => setIsMenuOpen(false)}
             >

@@ -10,7 +10,7 @@ const useAuthStatus = () => {
 };
 
 const LoanDetails = () => {
-  const { loanId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
   const { isLoggedIn, userRole } = useAuthStatus();
 
@@ -23,15 +23,15 @@ const LoanDetails = () => {
   useEffect(() => {
     const fetchLoanDetails = async () => {
       try {
-        // Fetch ALL data from the public folder
-        const response = await fetch("/mockData.json");
+        // Fetch ALL data from the public folder (uses loandata.json)
+        const response = await fetch("/loandata.json");
         if (!response.ok) {
           throw new Error("Failed to fetch loan data");
         }
         const allLoans = await response.json();
 
         // Find the specific loan details based on the URL ID
-        const selectedLoan = allLoans.find((l) => l.id === parseInt(loanId));
+        const selectedLoan = allLoans.find((l) => l.id === parseInt(id));
         setLoan(selectedLoan);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -41,12 +41,12 @@ const LoanDetails = () => {
     };
 
     fetchLoanDetails();
-  }, [loanId]);
+  }, [id]);
 
   const handleApplyNow = () => {
     if (canApply) {
       // Behavior: Clicking redirects to the Loan Application Form
-      navigate(`/loan-application/${loanId}`);
+      navigate(`/loan-application/${id}`);
     }
   };
 
