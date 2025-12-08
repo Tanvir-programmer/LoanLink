@@ -13,7 +13,7 @@ const Hero = () => {
   return (
     // Hero container with full width and height set to define its space
     <div
-      className="hero min-h-[500px] rounded-xl my-8 shadow-xl overflow-hidden"
+      className="hero min-h-[500px] rounded-xl my-8 shadow-xl overflow-hidden max-h-(10vh)"
       style={{
         backgroundImage: `url(${heroImageUrl})`,
       }}
@@ -47,7 +47,7 @@ const Hero = () => {
 
             {/* Secondary CTA: Explore Loans (Redirects to a loans list/details page) */}
             <button
-              onClick={() => navigate("/loans")} // Redirect to your loan products route
+              onClick={() => navigate("/allloans")} // Redirect to your loan products route
               className="btn btn-outline btn-lg rounded-full text-white border-white hover:bg-white hover:text-primary transition-colors duration-300 font-semibold"
             >
               <FaSearchDollar className="w-5 h-5 mr-2" />

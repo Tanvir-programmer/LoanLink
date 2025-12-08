@@ -2,9 +2,13 @@ import { createBrowserRouter } from "react-router";
 import Layout from "../layouts/Layout";
 import Home from "../pages/Home";
 import About from "../components/About";
-import Contact from "../components/Contact";
+
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import AllLoan from "../components/allLoans/AllLoan";
+import LoanDetails from "../components/LoanDetails/LoanDetails";
+import PrivateRoute from "./PrivateRoute";
+import ContactUs from "../components/ContactUs";
 
 export const router = createBrowserRouter([
   {
@@ -21,7 +25,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "contact",
-        element: <Contact></Contact>,
+        element: <ContactUs></ContactUs>,
       },
       {
         path: "login",
@@ -30,6 +34,18 @@ export const router = createBrowserRouter([
       {
         path: "register",
         element: <Register></Register>,
+      },
+      {
+        path: "allloans",
+        element: <AllLoan></AllLoan>,
+      },
+      {
+        path: "loan-details/:id",
+        element: (
+          <PrivateRoute>
+            <LoanDetails></LoanDetails>
+          </PrivateRoute>
+        ),
       },
     ],
   },

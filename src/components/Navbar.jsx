@@ -25,7 +25,7 @@ const useAuth = () => {
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  const { user, loading, signOutUser } = useAuth();
+  const { user, signOutUser } = useAuth();
   const navigate = useNavigate();
   const isLoggedIn = !!user;
 
@@ -69,14 +69,6 @@ const Navbar = () => {
     </button>
   );
 
-  if (loading) {
-    return (
-      <div className="navbar bg-base-100 shadow-sm justify-center py-4">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-white shadow-lg sticky top-0 z-50">
       <div className="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20">
@@ -95,7 +87,7 @@ const Navbar = () => {
               </NavLink>
             </li>
             <li>
-              <NavLink to="/loans" className={getNavLinkClass}>
+              <NavLink to="/allloans" className={getNavLinkClass}>
                 <FaMoneyBillAlt className="h-4 w-4" />
                 All Loans
               </NavLink>

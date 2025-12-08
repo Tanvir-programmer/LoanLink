@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { Eye, EyeOff, Info } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { toast, Toaster } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
@@ -150,10 +151,10 @@ const Registration = () => {
             />
             <button
               type="button"
-              onClick={togglePasswordVisibility}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-600 font-medium"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-12 -translate-y-1/2 text-gray-600 hover:text-gray-800"
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
 
