@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { toast, Toaster } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 import { reload } from "firebase/auth";
+import { saveOrUpdateUser } from "../../utils/utils";
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -12,13 +13,14 @@ const Registration = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState("");
 
-  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
   const handleGoogleRegister = async (e) => {
     e.preventDefault();
     try {
       const result = await signInWithGoogle();
+      const { displayName: name, email, photoURL } = result.user;
       setUser(result.user);
       toast.success("Signed in with Google!");
+      await saveOrUpdateUser({ name, email, photoURL, role });
       navigate("/");
     } catch (err) {
       if (err.code !== "auth/popup-closed-by-user") {
@@ -33,7 +35,9 @@ const Registration = () => {
     const email = form.email.value;
     const password = form.password.value;
     let photoURL =
-      form.photoURL.value || "https://i.ibb.co/L8y2w03/default-user.png";
+      form.photoURL.value && form.photoURL.value.trim() !== ""
+        ? form.photoURL.value
+        : "https://i.ibb.co/L8y2w03/default-user.png";
 
     // Password Validation
     if (password.length < 6) {
@@ -60,6 +64,9 @@ const Registration = () => {
       await updateUserProfile(name, photoURL);
       await reload(firebaseUser);
 
+      // Save or update user only after successful registration and validation
+      await saveOrUpdateUser({ name, email, photoURL, role });
+
       setUser({ ...firebaseUser, displayName: name, photoURL, role });
 
       toast.success("Registration successful!");
@@ -70,7 +77,6 @@ const Registration = () => {
       toast.error(err.message);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border-t-8 border-indigo-600">

@@ -45,7 +45,6 @@ const LoanDetails = () => {
 
   const handleApplyNow = () => {
     if (canApply) {
-      // Behavior: Clicking redirects to the Loan Application Form
       navigate(`/loan-application/${id}`);
     }
   };

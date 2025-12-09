@@ -28,6 +28,9 @@ const Navbar = () => {
   const { user, signOutUser } = useAuth();
   const navigate = useNavigate();
   const isLoggedIn = !!user;
+  const defaultAvatar = "https://i.ibb.co/6y4tW6F/default-profile.png";
+  const avatarSrc =
+    user?.photoURL || user?.providerData?.[0]?.photoURL || defaultAvatar;
 
   const handleLogout = () => {
     signOutUser()
@@ -117,11 +120,12 @@ const Navbar = () => {
               >
                 <div className="w-10 rounded-full">
                   <img
-                    src={
-                      user.photoURL ||
-                      "https://i.ibb.co/6y4tW6F/default-profile.png"
-                    }
-                    alt={user.displayName || "User Profile"}
+                    src={avatarSrc}
+                    alt={user?.displayName || "User Profile"}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = defaultAvatar;
+                    }}
                   />
                 </div>
               </div>

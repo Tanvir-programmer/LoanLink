@@ -47,6 +47,14 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+      {
+        path: "loan-application/:id",
+        element: (
+          <PrivateRoute>
+            <LoanDetails></LoanDetails>
+          </PrivateRoute>
+        ),
+      },
     ],
   },
 ]);
