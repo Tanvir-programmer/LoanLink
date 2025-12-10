@@ -38,11 +38,11 @@ const Hero = () => {
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             {/* Primary CTA: Apply for Loan (Redirects to Application Form) */}
             <button
-              onClick={() => navigate("/apply")} // Redirect to your application route
+              onClick={() => navigate("/loan-details/1")} // Redirect to your application route
               className="btn btn-primary btn-lg rounded-full shadow-2xl transform transition-transform duration-300 hover:scale-[1.05] hover:shadow-primary/50 text-base-100 font-semibold"
             >
               <FaMoneyBillWave className="w-5 h-5 mr-2" />
-              Apply for Loan Now
+              Apply for Popular Loan
             </button>
 
             {/* Secondary CTA: Explore Loans (Redirects to a loans list/details page) */}

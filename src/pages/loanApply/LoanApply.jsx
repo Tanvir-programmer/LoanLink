@@ -1,195 +1,302 @@
-import React, { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext"; // adjust path
+import React, { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+
+// --- Form Field Helper Components (Unchanged) ---
+const InputField = ({
+  label,
+  name,
+  register,
+  errors,
+  type = "text",
+  placeholder,
+  required = true,
+  ...rest
+}) => (
+  <div className="space-y-1">
+    <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <input
+      id={name}
+      type={type}
+      // Note: The placeholder prop is now defined in the main component usage
+      placeholder={placeholder || label}
+      {...register(name, {
+        required: required ? `${label} is required` : false,
+      })}
+      className="p-3 border border-gray-300 rounded-lg w-full shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition duration-150 ease-in-out bg-white"
+      {...rest}
+    />
+    {errors[name] && (
+      <p className="text-red-600 text-xs font-medium mt-1">
+        {errors[name].message}
+      </p>
+    )}
+  </div>
+);
+
+const TextAreaField = ({
+  label,
+  name,
+  register,
+  errors,
+  placeholder,
+  rows = 3,
+  required = true,
+  ...rest
+}) => (
+  <div className="space-y-1">
+    <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <textarea
+      id={name}
+      rows={rows}
+      // Note: The placeholder prop is now defined in the main component usage
+      placeholder={placeholder || label}
+      {...register(name, {
+        required: required ? `${label} is required` : false,
+      })}
+      className="p-3 border border-gray-300 rounded-lg w-full shadow-sm placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition duration-150 ease-in-out bg-white resize-y"
+      {...rest}
+    />
+    {errors[name] && (
+      <p className="text-red-600 text-xs font-medium mt-1">
+        {errors[name].message}
+      </p>
+    )}
+  </div>
+);
+
+// --- Main Component ---
 
 const LoanApply = () => {
   const { user } = useContext(AuthContext);
 
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    contactNumber: "",
-    nationalId: "",
-    incomeSource: "",
-    monthlyIncome: "",
-    loanAmount: "",
-    loanReason: "",
-    address: "",
-    extraNotes: "",
-  });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // Handle Form Submit
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleFormSubmission = async (data) => {
+    // Ensure numeric fields are correctly typed before sending
     const applicationData = {
-      ...formData,
-
+      ...data,
       email: user?.email,
       loanTitle: "Micro Loan",
       interestRate: "8%",
-
       status: "Pending",
-      applicationFeeStatus: "unpaid",
-
+      applicationFeeStatus: "Unpaid",
       createdAt: new Date(),
+      monthlyIncome: parseFloat(data.monthlyIncome),
+      loanAmount: parseFloat(data.loanAmount),
     };
 
     try {
       const res = await axios.post(
-        "https://your-server-url.com/loan-applications",
+        "http://localhost:3000/apply-loan",
         applicationData
       );
 
       if (res.data.insertedId) {
-        alert("Loan Application Submitted!");
+        toast.success(
+          "Application Submitted! You will receive a confirmation email shortly."
+        );
+        reset();
+      } else {
+        toast.error(
+          "Submission failed: Server returned an unexpected response."
+        );
       }
     } catch (error) {
-      console.log(error);
+      console.error("Submission Error:", error);
+      toast.error(
+        "Application failed to submit. Please verify your details and connection."
+      );
     }
-  };
-  const handleApplySubmit = () => {
-    toast.success("Loan Application Submitted!");
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow mt-8">
-      <h2 className="text-2xl font-bold mb-6 text-center">
-        Loan Application Form
-      </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Auto-Filled Fields (Read Only) */}
-        <div>
-          <label className="font-semibold">User Email</label>
-          <input
-            type="text"
-            value={user?.email}
-            readOnly
-            className="w-full p-2 border rounded bg-gray-100"
-          />
+    <div className="min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl border border-gray-200 divide-y divide-gray-200">
+        {/* --- Header Section --- */}
+        <div className="p-8 sm:p-10 text-center">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-800 tracking-tight">
+            Micro Loan Application
+          </h1>
+          <p className="text-gray-500 mt-2 text-md sm:text-lg">
+            Complete the sections below to fast-track your application. All
+            fields marked with <span className="text-red-500">*</span> are
+            required.
+          </p>
         </div>
 
-        <div>
-          <label className="font-semibold">Loan Title</label>
-          <input
-            type="text"
-            value="Micro Loan"
-            readOnly
-            className="w-full p-2 border rounded bg-gray-100"
-          />
+        {/* --- Loan Summary Overview (Consistent Branding) --- */}
+        <div className="bg-blue-50 p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
+            <span className="mr-2">🏦</span> Loan Product Details
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+            <div className="p-3 border border-blue-200 rounded-lg bg-white/70">
+              <p className="text-xs font-semibold text-gray-500 uppercase">
+                Loan Type
+              </p>
+              <p className="text-lg font-bold text-gray-800 mt-0.5">
+                Micro Loan
+              </p>
+            </div>
+            <div className="p-3 border border-blue-200 rounded-lg bg-white/70">
+              <p className="text-xs font-semibold text-gray-500 uppercase">
+                Fixed Interest Rate
+              </p>
+              <p className="text-lg font-bold text-green-600 mt-0.5">8% APR</p>
+            </div>
+            <div className="p-3 border border-blue-200 rounded-lg bg-white/70">
+              <p className="text-xs font-semibold text-gray-500 uppercase">
+                Application Email
+              </p>
+              <p className="text-sm font-medium text-gray-700 mt-0.5 truncate">
+                {user?.email}
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <label className="font-semibold">Interest Rate</label>
-          <input
-            type="text"
-            value="8%"
-            readOnly
-            className="w-full p-2 border rounded bg-gray-100"
-          />
-        </div>
-
-        {/* User Input Fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            name="firstName"
-            onChange={handleChange}
-            required
-            placeholder="First Name"
-            className="p-2 border rounded w-full"
-          />
-          <input
-            name="lastName"
-            onChange={handleChange}
-            required
-            placeholder="Last Name"
-            className="p-2 border rounded w-full"
-          />
-        </div>
-
-        <input
-          name="contactNumber"
-          onChange={handleChange}
-          required
-          placeholder="Contact Number"
-          className="p-2 border rounded w-full"
-        />
-
-        <input
-          name="nationalId"
-          onChange={handleChange}
-          required
-          placeholder="National ID / Passport Number"
-          className="p-2 border rounded w-full"
-        />
-
-        <input
-          name="incomeSource"
-          onChange={handleChange}
-          required
-          placeholder="Income Source"
-          className="p-2 border rounded w-full"
-        />
-
-        <input
-          name="monthlyIncome"
-          onChange={handleChange}
-          required
-          type="number"
-          placeholder="Monthly Income"
-          className="p-2 border rounded w-full"
-        />
-
-        <input
-          name="loanAmount"
-          onChange={handleChange}
-          required
-          type="number"
-          placeholder="Loan Amount"
-          className="p-2 border rounded w-full"
-        />
-
-        <textarea
-          name="loanReason"
-          onChange={handleChange}
-          required
-          placeholder="Reason for Loan"
-          className="p-2 border rounded w-full"
-        />
-
-        <textarea
-          name="address"
-          onChange={handleChange}
-          required
-          placeholder="Address"
-          className="p-2 border rounded w-full"
-        />
-
-        <textarea
-          name="extraNotes"
-          onChange={handleChange}
-          placeholder="Extra Notes (Optional)"
-          className="p-2 border rounded w-full"
-        />
-
-        {/* Submit Button */}
-        <button
-          onSubmit={handleApplySubmit}
-          type="submit"
-          className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700"
+        {/* --- Application Form --- */}
+        <form
+          onSubmit={handleSubmit(handleFormSubmission)}
+          className="space-y-12 p-8 sm:p-10"
         >
-          Submit Application
-        </button>
-      </form>
+          {/* 1. Applicant Information */}
+          <section className="space-y-6">
+            <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-blue-500/50 pb-2">
+              1. Applicant Information
+            </h2>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <InputField
+                label="Legal First Name"
+                name="firstName"
+                register={register}
+                errors={errors}
+                placeholder="Enter your legal first name" // Updated
+              />
+              <InputField
+                label="Legal Last Name"
+                name="lastName"
+                register={register}
+                errors={errors}
+                placeholder="Enter your legal last name" // Updated
+              />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <InputField
+                label="Primary Contact Number"
+                name="contactNumber"
+                register={register}
+                errors={errors}
+                placeholder="e.g., +1 (555) 123-4567" // Updated
+              />
+              <InputField
+                label="National ID / Passport Number"
+                name="nationalId"
+                register={register}
+                errors={errors}
+                placeholder="Provide government issued ID number" // Updated
+              />
+            </div>
+          </section>
+
+          {/* 2. Financial & Loan Details */}
+          <section className="space-y-6">
+            <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-blue-500/50 pb-2">
+              2. Financial and Loan Requirements
+            </h2>
+
+            <InputField
+              label="Source of Income (Employer or Business Name)"
+              name="incomeSource"
+              register={register}
+              errors={errors}
+              placeholder="Name of your employer or primary business" // Updated
+            />
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <InputField
+                label="Estimated Monthly Income (Pre-tax)"
+                name="monthlyIncome"
+                register={register}
+                errors={errors}
+                type="number"
+                placeholder="Enter gross monthly income (e.g., 5500.00)" // Updated
+              />
+              <InputField
+                label="Requested Loan Amount"
+                name="loanAmount"
+                register={register}
+                errors={errors}
+                type="number"
+                placeholder="Enter requested amount (e.g., 10000.00)" // Updated
+              />
+            </div>
+
+            <TextAreaField
+              label="Purpose of Loan (Briefly explain your need)"
+              name="loanReason"
+              register={register}
+              errors={errors}
+              placeholder="State the primary reason for seeking this loan" // Updated
+            />
+          </section>
+
+          {/* 3. Residential Address */}
+          <section className="space-y-6">
+            <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-blue-500/50 pb-2">
+              3. Residential Address & Notes
+            </h2>
+
+            <TextAreaField
+              label="Current Full Residential Address"
+              name="address"
+              register={register}
+              errors={errors}
+              rows={3}
+              placeholder="Include Street, City, State, and Zip/Postal Code" // Updated
+            />
+
+            <TextAreaField
+              label="Additional Notes (Optional)"
+              name="extraNotes"
+              register={register}
+              errors={errors}
+              rows={2}
+              required={false}
+              placeholder="Provide any information relevant to processing your application (optional)" // Updated
+            />
+          </section>
+
+          {/* --- Final Submission & Consent --- */}
+          <div className="pt-6 border-t border-gray-200">
+            <p className="text-sm text-center text-gray-600 mb-6">
+              By clicking "Submit Application," you confirm that all information
+              provided is accurate and grant us authorization to conduct
+              necessary verification checks.
+            </p>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white font-extrabold py-4 rounded-lg text-xl shadow-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/50"
+            >
+              Submit Application
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

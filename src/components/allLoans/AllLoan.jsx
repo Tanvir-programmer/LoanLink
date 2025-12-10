@@ -4,11 +4,11 @@ import { useNavigate } from "react-router";
 // Loan Card Component
 const LoanCard = ({ loan }) => {
   const navigate = useNavigate();
-
   const handleViewDetails = () => {
     navigate(`/loan-details/${loan.id}`);
   };
 
+  // --- Success/Display State ---
   return (
     <div
       className="flex flex-col bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden
