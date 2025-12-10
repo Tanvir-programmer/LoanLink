@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
 import { Eye, EyeOff, Info } from "lucide-react";
 import { NavLink, useNavigate } from "react-router";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-hot-toast";
-import { saveOrUpdateUser } from "../../utils/utils";
+import { saveOrUpdateUser } from "../../../utils/utils";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);

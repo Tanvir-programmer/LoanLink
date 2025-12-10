@@ -3,17 +3,20 @@ import Layout from "../layouts/Layout";
 import Home from "../pages/Home";
 import About from "../components/About";
 
-import Login from "../pages/Login";
+import Login from "../pages/login/Login";
 import Register from "../pages/Register";
 import AllLoan from "../components/allLoans/AllLoan";
 import LoanDetails from "../components/LoanDetails/LoanDetails";
 import PrivateRoute from "./PrivateRoute";
 import ContactUs from "../components/ContactUs";
+import LoanApply from "../pages/loanApply/LoanApply";
+import ErrorPage from "../components/ErrorPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout></Layout>,
+    errorElement: <ErrorPage></ErrorPage>,
     children: [
       {
         path: "/",
@@ -51,7 +54,15 @@ export const router = createBrowserRouter([
         path: "loan-application/:id",
         element: (
           <PrivateRoute>
-            <LoanDetails></LoanDetails>
+            <LoanApply></LoanApply>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "loan-application",
+        element: (
+          <PrivateRoute>
+            <LoanApply></LoanApply>
           </PrivateRoute>
         ),
       },

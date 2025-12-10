@@ -24,13 +24,12 @@ const LoanDetails = () => {
     const fetchLoanDetails = async () => {
       try {
         // Fetch ALL data from the public folder (uses loandata.json)
-        const response = await fetch("/loandata.json");
+        const response = await fetch("http://localhost:3000/loans");
         if (!response.ok) {
           throw new Error("Failed to fetch loan data");
         }
         const allLoans = await response.json();
 
-        // Find the specific loan details based on the URL ID
         const selectedLoan = allLoans.find((l) => l.id === parseInt(id));
         setLoan(selectedLoan);
       } catch (error) {
@@ -44,6 +43,11 @@ const LoanDetails = () => {
   }, [id]);
 
   const handleApplyNow = () => {
+    if (userRole !== "User") {
+      return;
+    }
+    navigate(`/loan-application/${id}`);
+    
     if (canApply) {
       navigate(`/loan-application/${id}`);
     }

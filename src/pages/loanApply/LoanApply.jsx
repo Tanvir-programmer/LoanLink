@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
-import { AuthContext } from "../../providers/AuthProvider"; // adjust path
+import { AuthContext } from "../../context/AuthContext"; // adjust path
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const LoanApply = () => {
   const { user } = useContext(AuthContext);
@@ -39,7 +40,6 @@ const LoanApply = () => {
       status: "Pending",
       applicationFeeStatus: "unpaid",
 
-     
       createdAt: new Date(),
     };
 
@@ -55,6 +55,9 @@ const LoanApply = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+  const handleApplySubmit = () => {
+    toast.success("Loan Application Submitted!");
   };
 
   return (
@@ -180,6 +183,7 @@ const LoanApply = () => {
 
         {/* Submit Button */}
         <button
+          onSubmit={handleApplySubmit}
           type="submit"
           className="w-full bg-blue-600 text-white p-3 rounded hover:bg-blue-700"
         >
