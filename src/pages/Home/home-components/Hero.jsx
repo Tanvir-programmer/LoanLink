@@ -5,53 +5,52 @@ import { FaMoneyBillWave, FaSearchDollar } from "react-icons/fa";
 const Hero = () => {
   const navigate = useNavigate();
 
-  // The image URL should be replaced with a meaningful, high-quality image related to finance,
-  // home ownership, or future planning.
   const heroImageUrl =
-    "https://images.unsplash.com/photo-1556740758-9430ef899482?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+    "https://images.unsplash.com/photo-1556740758-9430ef899482?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fGg%3D";
 
   return (
-    // Hero container with full width and height set to define its space
     <div
-      className="hero min-h-[500px] rounded-xl my-8 shadow-xl overflow-hidden max-h-(10vh)"
+      className="relative w-full h-[70vh] sm:h-[70vh] md:h-[60vh] lg:h-[70vh] xl:h-[80vh] my-6 sm:my-8 shadow-2xl rounded-2xl overflow-hidden flex items-center justify-center"
       style={{
         backgroundImage: `url(${heroImageUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
-      {/* Overlay to darken the image and make text readable */}
-      <div className="hero-overlay bg-black bg-opacity-60"></div>
+      {/* Overlay for readability */}
+      <div className="absolute inset-0 bg-gray-900 bg-opacity-70 backdrop-blur-sm"></div>
 
-      {/* Hero Content */}
-      <div className="hero-content text-center text-neutral-content py-16">
-        <div className="max-w-3xl">
-          {/* Descriptive Text */}
-          <h1 className="text-5xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-wider">
-            Finance Your Future, Today.
+      {/* Hero content */}
+      <div className="relative z-10 text-center text-white px-3 sm:px-6 md:px-8 lg:px-16 max-w-full overflow-hidden">
+        <div className="max-w-3xl sm:max-w-4xl mx-auto break-words">
+          <h1 className="text-2xl xs:text-2xl sm:text-4xl md:text-4xl lg:text-5xl font-extrabold mb-4 sm:mb-5 leading-snug sm:leading-tight tracking-wide">
+            Empower Your Financial Journey
           </h1>
-          <p className="mb-10 text-xl font-light text-gray-200">
-            Unlock the funds you need with LoanLink. We offer competitive rates
-            and a straightforward application process for personal, home, and
-            business loans.
+
+          <p className="mb-6 sm:mb-12 text-sm xs:text-sm sm:text-base md:text-lg font-medium text-gray-200 px-2 sm:px-4 break-words">
+            Access competitive financing solutions with a seamless and secure
+            digital application process.
           </p>
 
-          {/* Call-to-Action Buttons */}
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-            {/* Primary CTA: Apply for Loan (Redirects to Application Form) */}
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-5">
             <button
-              onClick={() => navigate("/loan-details/1")} // Redirect to your application route
-              className="btn btn-primary btn-lg rounded-full shadow-2xl transform transition-transform duration-300 hover:scale-[1.05] hover:shadow-primary/50 text-base-100 font-semibold"
+              onClick={() => navigate("/loan-details/1")}
+              className="w-full sm:w-auto px-5 sm:px-8 py-3 text-sm sm:text-lg font-bold rounded-full bg-primary text-white shadow-xl hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.02]"
             >
-              <FaMoneyBillWave className="w-5 h-5 mr-2" />
-              Apply for Popular Loan
+              <span className="flex items-center justify-center">
+                <FaMoneyBillWave className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                Start Your Application
+              </span>
             </button>
 
-            {/* Secondary CTA: Explore Loans (Redirects to a loans list/details page) */}
             <button
-              onClick={() => navigate("/allloans")} // Redirect to your loan products route
-              className="btn btn-outline btn-lg rounded-full text-white border-white hover:bg-white hover:text-primary transition-colors duration-300 font-semibold"
+              onClick={() => navigate("/allloans")}
+              className="w-full sm:w-auto px-5 sm:px-8 py-3 text-sm sm:text-lg font-bold rounded-full border-2 border-white text-white bg-transparent hover:bg-white hover:text-gray-900 transition-colors duration-300"
             >
-              <FaSearchDollar className="w-5 h-5 mr-2" />
-              Explore Loan Options
+              <span className="flex items-center justify-center">
+                <FaSearchDollar className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
+                Compare All Options
+              </span>
             </button>
           </div>
         </div>

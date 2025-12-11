@@ -8,7 +8,6 @@ const LoanCard = ({ loan }) => {
     navigate(`/loan-details/${loan.id}`);
   };
 
-  // --- Success/Display State ---
   return (
     <div
       className="flex flex-col bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden
@@ -64,11 +63,9 @@ const AllLoan = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Accessing the file at the project root path
     const fetchLoans = async () => {
       try {
-        // The URL is just the filename because it is in the public folder
-        const response = await fetch("/loandata.json");
+        const response = await fetch("http://localhost:3000/loans");
         if (!response.ok) {
           throw new Error("Failed to fetch loan data");
         }
@@ -84,10 +81,13 @@ const AllLoan = () => {
     fetchLoans();
   }, []);
 
+  // ✅ Replaced loading text with your Tailwind spinner
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-50">
-        <p className="text-xl text-gray-700">Loading loan offerings...</p>
+        <div className="w-10 h-10 relative">
+          <div className="absolute inset-0 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
+        </div>
       </div>
     );
   }

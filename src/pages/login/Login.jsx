@@ -3,7 +3,6 @@ import { Eye, EyeOff, Info } from "lucide-react";
 import { NavLink, useNavigate } from "react-router";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-hot-toast";
-import { saveOrUpdateUser } from "../../../utils/utils";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,10 +15,8 @@ const Login = () => {
     e.preventDefault();
     try {
       const result = await signInWithGoogle();
-      const { displayName: name, email, photoURL } = result.user;
       setUser(result.user);
       toast.success("Signed in with Google!");
-      await saveOrUpdateUser({ name, email, photoURL, role: "user" });
       navigate("/");
     } catch (err) {
       if (err.code !== "auth/popup-closed-by-user") {
@@ -27,7 +24,6 @@ const Login = () => {
       }
     }
   };
-
   return (
     <div className="flex justify-center items-center min-h-screen bg-base-200 p-4">
       <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 border border-gray-200">

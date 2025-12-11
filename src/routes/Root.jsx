@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router";
 import Layout from "../layouts/Layout";
-import Home from "../pages/Home/Home";
-import About from "../components/About";
 
+import About from "../components/About";
+import Home from "../pages/Home/home-components/Home";
 import Login from "../pages/login/Login";
 import Register from "../pages/Register";
 import AllLoan from "../components/allLoans/AllLoan";

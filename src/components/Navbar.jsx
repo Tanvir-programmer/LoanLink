@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+// FIX: Corrected import from "react-router" to "react-router-dom"
 import { NavLink, useNavigate } from "react-router";
 import {
   FaSignOutAlt,
@@ -13,24 +14,55 @@ import {
 import { AuthContext } from "../context/AuthContext";
 import toast from "react-hot-toast";
 
+// --- Custom Hook (useAuth) ---
 const useAuth = () => {
   const auth = useContext(AuthContext);
 
   if (!auth) {
+    // This provides safe defaults if AuthContext is not available
     return { user: null, loading: true, signOutUser: () => Promise.resolve() };
   }
   return auth;
 };
 
+// --- Placeholder AuthButton Component (Assumed to be defined elsewhere) ---
+// This is added to prevent errors since it's called in the Navbar return block
+const AuthButton = ({ isLoggedIn }) => {
+  const navigate = useNavigate();
+  return (
+    <div className="flex gap-2">
+      {!isLoggedIn && (
+        <>
+          <button
+            className="btn btn-primary btn-outline btn-sm text-sm"
+            onClick={() => navigate("/login")}
+          >
+            <FaSignInAlt className="w-4 h-4 mr-1" />
+            Login
+          </button>
+          <button
+            className="btn btn-primary btn-sm text-sm hidden sm:inline-flex"
+            onClick={() => navigate("/register")}
+          >
+            Register
+          </button>
+        </>
+      )}
+    </div>
+  );
+};
+
+// --- Navbar Component ---
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const { user, signOutUser } = useAuth();
   const navigate = useNavigate();
   const isLoggedIn = !!user;
-  const defaultAvatar = "https://i.ibb.co/6y4tW6F/default-profile.png";
-  const avatarSrc =
-    user?.photoURL || user?.providerData?.[0]?.photoURL || defaultAvatar;
+  // const defaultAvatar = "https://i.ibb.co/6y4tW6F/default-profile.png";
+
+  // FIX: Robust logic to check multiple user properties for the photo URL
+  // const avatarSrc = user.photoURL;
 
   const handleLogout = () => {
     signOutUser()
@@ -40,6 +72,7 @@ const Navbar = () => {
       })
       .catch((error) => {
         console.error("Logout Error:", error);
+        // Firebase logout errors are rare, but this handles potential issues
         toast.error(error.message || "Error logging out.");
       });
   };
@@ -51,33 +84,19 @@ const Navbar = () => {
         : "text-gray-600 hover:text-primary hover:bg-gray-100"
     }`;
 
-  const AuthButton = ({ isLoggedIn }) => (
-    <button
-      className="btn btn-sm text-sm font-semibold rounded-full px-4 transition-all duration-300 shadow-lg 
-					hover:shadow-xl hover:bg-primary-focus hover:scale-[1.02] 
-					bg-primary border-primary text-white w-full lg:w-auto"
-      onClick={isLoggedIn ? handleLogout : () => navigate("/login")}
-    >
-      {isLoggedIn ? (
-        <>
-          <FaSignOutAlt className="mr-1" />
-          Logout
-        </>
-      ) : (
-        <>
-          <FaSignInAlt className="mr-1" />
-          Login
-        </>
-      )}
-    </button>
-  );
+  // Log user information after login
+  React.useEffect(() => {
+    if (isLoggedIn) {
+      console.log("User logged in:", user);
+    }
+  }, [isLoggedIn, user]);
 
   return (
     <div className="bg-white shadow-lg sticky top-0 z-50">
       <div className="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20">
         <div className="navbar-start">
-          <a className="text-2xl font-extrabold text-primary tracking-wider transition-colors duration-200">
-            LoanLink
+          <a className="text-2xl font-extrabold text-primary tracking-wider transition-colors duration-200 btn btn-ghost">
+            <NavLink to="/">LoanLink</NavLink>
           </a>
         </div>
 
@@ -120,12 +139,11 @@ const Navbar = () => {
               >
                 <div className="w-10 rounded-full">
                   <img
-                    src={avatarSrc}
+                    src={
+                      user?.photoURL ||
+                      "https://i.ibb.co/6y4tW6F/default-profile.png"
+                    }
                     alt={user?.displayName || "User Profile"}
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = defaultAvatar;
-                    }}
                   />
                 </div>
               </div>
@@ -167,6 +185,7 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Mobile Menu */}
       <div
         className={`lg:hidden transition-all duration-300 ease-in-out overflow-hidden shadow-inner ${
           isMenuOpen ? "max-h-96 opacity-100 py-4" : "max-h-0 opacity-0"

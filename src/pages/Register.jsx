@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router";
 import { toast, Toaster } from "react-hot-toast";
 import { AuthContext } from "../context/AuthContext";
 import { reload } from "firebase/auth";
-import { saveOrUpdateUser } from "../../utils/utils";
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -17,10 +16,8 @@ const Registration = () => {
     e.preventDefault();
     try {
       const result = await signInWithGoogle();
-      const { displayName: name, email, photoURL } = result.user;
       setUser(result.user);
       toast.success("Signed in with Google!");
-      await saveOrUpdateUser({ name, email, photoURL, role });
       navigate("/");
     } catch (err) {
       if (err.code !== "auth/popup-closed-by-user") {
@@ -63,9 +60,6 @@ const Registration = () => {
 
       await updateUserProfile(name, photoURL);
       await reload(firebaseUser);
-
-      // Save or update user only after successful registration and validation
-      await saveOrUpdateUser({ name, email, photoURL, role });
 
       setUser({ ...firebaseUser, displayName: name, photoURL, role });
 

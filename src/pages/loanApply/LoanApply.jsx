@@ -104,9 +104,7 @@ const LoanApply = () => {
       );
 
       if (res.data.insertedId) {
-        toast.success(
-          "Application Submitted! You will receive a confirmation email shortly."
-        );
+        toast.success("Application Submitted!");
         reset();
       } else {
         toast.error(
