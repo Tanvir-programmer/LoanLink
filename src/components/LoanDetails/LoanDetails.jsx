@@ -24,7 +24,9 @@ const LoanDetails = () => {
     const fetchLoanDetails = async () => {
       try {
         // Fetch ALL data from the public folder (uses loandata.json)
-        const response = await fetch("http://localhost:3000/loans");
+        const response = await fetch(
+          "https://loan-link-server-two.vercel.app/loans"
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch loan data");
         }
@@ -47,7 +49,7 @@ const LoanDetails = () => {
       return;
     }
     navigate(`/loan-application/${id}`);
-    
+
     if (canApply) {
       navigate(`/loan-application/${id}`);
     }

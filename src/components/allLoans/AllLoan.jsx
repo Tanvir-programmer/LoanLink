@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import LoadingSpinner from "../Shared/LoadingSpinner";
 
 // Loan Card Component
 const LoanCard = ({ loan }) => {
@@ -65,7 +66,9 @@ const AllLoan = () => {
   useEffect(() => {
     const fetchLoans = async () => {
       try {
-        const response = await fetch("http://localhost:3000/loans");
+        const response = await fetch(
+          "https://loan-link-server-two.vercel.app/loans"
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch loan data");
         }
@@ -83,13 +86,7 @@ const AllLoan = () => {
 
   // ✅ Replaced loading text with your Tailwind spinner
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
-        <div className="w-10 h-10 relative">
-          <div className="absolute inset-0 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner></LoadingSpinner>;
   }
 
   if (loans.length === 0) {

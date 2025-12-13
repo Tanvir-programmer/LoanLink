@@ -1,13 +1,18 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import LoadingSpinner from "../../../components/Shared/LoadingSpinner";
 
 const AvailableLoan = () => {
+  const navigate = useNavigate();
   const [loans, setLoans] = useState([]);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchLoans = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/loans");
+        const response = await axios.get(
+          "https://loan-link-server-two.vercel.app/loans"
+        );
         setLoans(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -18,14 +23,12 @@ const AvailableLoan = () => {
 
     fetchLoans();
   }, []);
+  // ... existing code ...
+
   return (
     <div className="my-10">
       {loading ? (
-        <div className=" flex justify-center items-center bg-gray-50">
-          <div className="w-10 h-10 relative ">
-            <div className="absolute inset-0 animate-spin rounded-full border-4 border-indigo-600 border-t-transparent"></div>
-          </div>
-        </div>
+        <LoadingSpinner />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {loans.slice(0, 6).map((loan) => (
@@ -44,7 +47,10 @@ const AvailableLoan = () => {
                 <p className="text-lg font-bold text-indigo-600 mb-4">
                   Max Limit: ${loan.maxLimit}
                 </p>
-                <button className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
+                <button
+                  className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
+                  onClick={() => navigate(`/loan-details/${loan.id}`)}
+                >
                   View Details
                 </button>
               </div>

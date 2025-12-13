@@ -154,6 +154,9 @@ const Navbar = () => {
                 <li className="font-semibold text-gray-800 p-2 border-b border-gray-200">
                   {user.displayName || "Profile"}
                 </li>
+                <li className="font-semibold text-gray-800 p-2 border-b border-gray-200">
+                  <NavLink to="/dashboard">Dashboard</NavLink>
+                </li>
                 <li>
                   <button
                     className="text-red-500 hover:bg-red-50"
