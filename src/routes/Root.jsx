@@ -11,6 +11,8 @@ import PrivateRoute from "./PrivateRoute";
 import ContactUs from "../components/ContactUs";
 import LoanApply from "../pages/loanApply/LoanApply";
 import ErrorPage from "../components/ErrorPage";
+import DashboardLayout from "../layouts/DashBoardLayout";
+import MyProfile from "../components/Dashboard/MyProfile";
 
 export const router = createBrowserRouter([
   {
@@ -67,6 +69,17 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
+    ],
+  },
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRoute>
+        <DashboardLayout></DashboardLayout>
+      </PrivateRoute>
+    ),
+    children: [
+      { path: "/dashboard/profile", element: <MyProfile></MyProfile> },
     ],
   },
 ]);
