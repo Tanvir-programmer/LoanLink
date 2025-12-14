@@ -13,6 +13,8 @@ import LoanApply from "../pages/loanApply/LoanApply";
 import ErrorPage from "../components/ErrorPage";
 import DashboardLayout from "../layouts/DashBoardLayout";
 import MyProfile from "../components/Dashboard/MyProfile";
+import AddLoanForManagers from "../components/Dashboard/AddLoan/AddLoanForManagers";
+import ManageLoans from "../components/Dashboard/ManageMyLoan/ManageMyLoans";
 
 export const router = createBrowserRouter([
   {
@@ -79,7 +81,30 @@ export const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
-      { path: "/dashboard/profile", element: <MyProfile></MyProfile> },
+      {
+        path: "/dashboard/profile",
+        element: (
+          <PrivateRoute>
+            <MyProfile></MyProfile>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/add-loan",
+        element: (
+          <PrivateRoute>
+            <AddLoanForManagers></AddLoanForManagers>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/manage-loans",
+        element: (
+          <PrivateRoute>
+            <ManageLoans></ManageLoans>
+          </PrivateRoute>
+        ),
+      },
     ],
   },
 ]);

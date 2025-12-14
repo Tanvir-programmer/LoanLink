@@ -24,7 +24,7 @@ const Login = () => {
       const dbUserData = {
         email: result.user.email,
       };
-      // await saveOrUpdateUser(dbUserData);
+      await saveOrUpdateUser(dbUserData);
 
       setUser(result.user);
       toast.success("Login successful!");

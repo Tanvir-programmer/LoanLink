@@ -7,6 +7,8 @@ import {
   FaUsers,
   FaHome,
 } from "react-icons/fa";
+import { MdManageAccounts, MdOutlinePendingActions } from "react-icons/md";
+import { FcApprove } from "react-icons/fc";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext"; // Ensure path is correct
 
@@ -106,19 +108,22 @@ const Sidebar = () => {
               to="/dashboard/manage-loans"
               className="flex items-center gap-2"
             >
+              <MdManageAccounts />
               Manage My Loans
             </NavLink>
             <NavLink
               to="/dashboard/pending-loans"
               className="flex items-center gap-2"
             >
-              Pending Apps
+              <MdOutlinePendingActions />
+              Pending Applications
             </NavLink>
             <NavLink
               to="/dashboard/approved-loans"
               className="flex items-center gap-2"
             >
-              Approved Apps
+              <FcApprove />
+              Approved Applications
             </NavLink>
           </>
         )}
