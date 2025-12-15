@@ -20,6 +20,7 @@ import PendingApplications from "../components/Dashboard/Shared/PendingApplicato
 import ApprovedApplications from "../components/Dashboard/Shared/ApprovedApplications";
 import ManageUsers from "../components/Dashboard/Admin/ManageUsers";
 import LoanApplications from "../components/Dashboard/Admin/LoanApplications";
+import MyAppliedLoans from "../components/Dashboard/Users/MyAppliedLoans";
 
 export const router = createBrowserRouter([
   {
@@ -155,6 +156,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <LoanApplications />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/my-loans",
+        element: (
+          <PrivateRoute>
+            <MyAppliedLoans />
           </PrivateRoute>
         ),
       },
