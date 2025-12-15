@@ -12,9 +12,14 @@ import ContactUs from "../components/ContactUs";
 import LoanApply from "../pages/loanApply/LoanApply";
 import ErrorPage from "../components/ErrorPage";
 import DashboardLayout from "../layouts/DashBoardLayout";
-import MyProfile from "../components/Dashboard/MyProfile";
-import AddLoanForManagers from "../components/Dashboard/AddLoan/AddLoanForManagers";
-import ManageLoans from "../components/Dashboard/ManageMyLoan/ManageMyLoans";
+import MyProfile from "../components/Dashboard/Shared/MyProfile";
+import AddLoanForManagers from "../components/Dashboard/Shared/AddLoan/AddLoanForManagers";
+import ManageLoans from "../components/Dashboard/Managers/ManageMyLoan/ManageMyLoans";
+import UpdateLoans from "../components/Dashboard/Managers/updateLoans/UpdateLoans";
+import PendingApplications from "../components/Dashboard/Shared/PendingApplicatons";
+import ApprovedApplications from "../components/Dashboard/Shared/ApprovedApplications";
+import ManageUsers from "../components/Dashboard/Admin/ManageUsers";
+import LoanApplications from "../components/Dashboard/Admin/LoanApplications";
 
 export const router = createBrowserRouter([
   {
@@ -102,6 +107,54 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <ManageLoans></ManageLoans>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/update-loan/:id",
+        element: (
+          <PrivateRoute>
+            <UpdateLoans></UpdateLoans>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/pending-loans",
+        element: (
+          <PrivateRoute>
+            <PendingApplications></PendingApplications>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/approved-loans",
+        element: (
+          <PrivateRoute>
+            <ApprovedApplications />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/manage-users",
+        element: (
+          <PrivateRoute>
+            <ManageUsers />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/all-loan",
+        element: (
+          <PrivateRoute>
+            <AllLoan></AllLoan>
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/loan-applications",
+        element: (
+          <PrivateRoute>
+            <LoanApplications />
           </PrivateRoute>
         ),
       },

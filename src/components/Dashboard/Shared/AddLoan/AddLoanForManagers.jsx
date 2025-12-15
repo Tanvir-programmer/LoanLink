@@ -25,37 +25,27 @@ const AddLoanForManagers = () => {
     e.preventDefault();
     setLoading(true);
     const form = e.target;
-    // {
-    //   "_id": {
-    //     "$oid": "693907375d24eb988914167f"
-    //   },
-    //   "id": 6,
-    //   "title": "Working Capital Advance",
-    //   "category": "Short Term Debt",
-    //   "interest": "11.0%",
-    //   "maxLimit": "$5,000",
-    //   "description": "Quick access to funds to cover immediate operational needs or cash flow gaps. Ideal for small, unexpected business costs.",
-    //   "emiPlans": [
-    //     {
-    //       "duration": "3 Months",
-    //       "rate": "11.0%"
-    //     },
-    //     {
-    //       "duration": "6 Months",
-    //       "rate": "11.5%"
-    //     }
-    //   ],
-    //   "imageUrl": "https://i.ibb.co/TBKkfFq9/images-3.jpg"
-    // }
+
     const loanData = {
+      id: form.id.value,
       title: form.title.value,
-      description: form.description.value,
       category: form.category.value,
-      interestRate: parseFloat(form.interestRate.value),
-      maxLimit: parseFloat(form.maxLimit.value),
-      documents: form.documents.value,
-      emiPlans: form.emiPlans.value,
+      interest: "11%",
+      maxLimit: `$${Number(form.maxLimit.value).toLocaleString()}`,
+      description: form.description.value,
+      emiPlans: [
+        {
+          duration: "3 Months",
+          rate: "11.0%",
+        },
+        {
+          duration: "6 Months",
+          rate: "11.5%",
+        },
+      ],
       imageUrl: form.image.value,
+
+      documents: form.documents.value,
       createdAt: new Date().toISOString(),
       showOnHome: form.showOnHome.checked,
       status: "active",

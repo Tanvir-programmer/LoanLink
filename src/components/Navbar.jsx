@@ -149,11 +149,7 @@ const Navbar = () => {
                 <li className="font-semibold text-gray-800 p-2 border-b border-gray-200">
                   {user.displayName || "User"}
                 </li>
-                <li>
-                  <NavLink to="/dashboard" className="py-2">
-                    Dashboard
-                  </NavLink>
-                </li>
+
                 <li>
                   <button
                     className="text-red-500 hover:bg-red-50 py-2"

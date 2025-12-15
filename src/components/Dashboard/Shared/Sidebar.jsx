@@ -7,10 +7,14 @@ import {
   FaUsers,
   FaHome,
 } from "react-icons/fa";
-import { MdManageAccounts, MdOutlinePendingActions } from "react-icons/md";
+import {
+  MdManageAccounts,
+  MdOutlinePendingActions,
+  MdSettingsApplications,
+} from "react-icons/md";
 import { FcApprove } from "react-icons/fc";
 import axios from "axios";
-import { AuthContext } from "../../context/AuthContext"; // Ensure path is correct
+import { AuthContext } from "../../../context/AuthContext"; // Ensure path is correct
 
 const Sidebar = () => {
   const { user } = useContext(AuthContext);
@@ -90,6 +94,7 @@ const Sidebar = () => {
               to="/dashboard/loan-applications"
               className="flex items-center gap-2"
             >
+              <MdSettingsApplications />
               Loan Applications
             </NavLink>
           </>

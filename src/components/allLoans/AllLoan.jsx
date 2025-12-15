@@ -6,7 +6,7 @@ import LoadingSpinner from "../Shared/LoadingSpinner";
 const LoanCard = ({ loan }) => {
   const navigate = useNavigate();
   const handleViewDetails = () => {
-    navigate(`/loan-details/${loan.id}`);
+    navigate(`/loan-details/${loan._id}`);
   };
 
   return (
@@ -66,9 +66,7 @@ const AllLoan = () => {
   useEffect(() => {
     const fetchLoans = async () => {
       try {
-        const response = await fetch(
-          "https://loan-link-server-two.vercel.app/loans"
-        );
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/loans`);
         if (!response.ok) {
           throw new Error("Failed to fetch loan data");
         }
@@ -111,7 +109,7 @@ const AllLoan = () => {
 
       <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         {loans.map((loan) => (
-          <LoanCard key={loan.id} loan={loan} />
+          <LoanCard key={loan._id} loan={loan} />
         ))}
       </div>
     </div>

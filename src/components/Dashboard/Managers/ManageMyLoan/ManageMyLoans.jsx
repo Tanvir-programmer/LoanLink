@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router"; // ✅ fixed import
 import { Search, Edit3, Trash2, Plus, ExternalLink, Inbox } from "lucide-react";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
@@ -39,7 +39,9 @@ const ManageLoans = () => {
         try {
           const res = await fetch(
             `${import.meta.env.VITE_API_URL}/loans/${id}`,
-            { method: "DELETE" }
+            {
+              method: "DELETE",
+            }
           );
           if (res.ok) {
             setLoans(loans.filter((loan) => loan._id !== id));
@@ -57,6 +59,14 @@ const ManageLoans = () => {
       loan.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       loan.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-slate-50">
+        <p className="text-xl text-gray-700">Loading loan products...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 lg:p-10">
@@ -115,14 +125,16 @@ const ManageLoans = () => {
                 {filteredLoans.length > 0 ? (
                   filteredLoans.map((loan) => (
                     <tr key={loan._id} className="hover:bg-slate-50">
+                      {/* Image */}
                       <td>
                         <img
-                          src={loan.image}
+                          src={loan.imageUrl || loan.image}
                           alt={loan.title}
-                          className="w-12 h-12 rounded-lg object-cover"
+                          className="w-24 h-24 rounded-lg object-cover"
                         />
                       </td>
 
+                      {/* Title & ID */}
                       <td>
                         <div className="font-semibold text-slate-900">
                           {loan.title}
@@ -133,24 +145,38 @@ const ManageLoans = () => {
                         </div>
                       </td>
 
+                      {/* Interest */}
                       <td className="text-center font-bold text-indigo-600">
                         {loan.interestRate}%
                       </td>
 
+                      {/* Category */}
                       <td>
                         <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 text-xs font-semibold">
                           {loan.category}
                         </span>
                       </td>
 
+                      {/* Actions */}
                       <td className="text-right">
                         <div className="flex justify-end gap-2">
+                          {/* View Details */}
+                          <Link
+                            to={`/loan-details/${loan._id}`}
+                            className="p-2 rounded-lg hover:bg-indigo-50 text-indigo-600"
+                          >
+                            View
+                          </Link>
+
+                          {/* Edit */}
                           <Link
                             to={`/dashboard/update-loan/${loan._id}`}
                             className="p-2 rounded-lg hover:bg-indigo-50 text-indigo-600"
                           >
                             <Edit3 size={18} />
                           </Link>
+
+                          {/* Delete */}
                           <button
                             onClick={() => handleDelete(loan._id)}
                             className="p-2 rounded-lg hover:bg-red-50 text-red-500"

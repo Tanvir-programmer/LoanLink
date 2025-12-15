@@ -34,7 +34,7 @@ const Hero = () => {
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-5">
             <button
-              onClick={() => navigate("/loan-details/1")}
+              onClick={() => navigate("/loan-details/_1")}
               className="w-full sm:w-auto px-5 sm:px-8 py-3 text-sm sm:text-lg font-bold rounded-full bg-primary text-white shadow-xl hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.02]"
             >
               <span className="flex items-center justify-center">

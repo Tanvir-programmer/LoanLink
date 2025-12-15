@@ -7,10 +7,10 @@ import {
   FaCalendarAlt,
   FaShieldAlt,
 } from "react-icons/fa";
-import { AuthContext } from "../../context/AuthContext"; // Ensure this path is correct
+import { AuthContext } from "../../../context/AuthContext"; // Ensure this path is correct
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import LoadingSpinner from "../Shared/LoadingSpinner";
+import LoadingSpinner from "../../Shared/LoadingSpinner";
 
 const MyProfile = () => {
   // Destructure from Context
@@ -28,9 +28,7 @@ const MyProfile = () => {
 
   // Show loading spinner while Firebase is validating the user session
   if (loading) {
-    return (
-      <LoadingSpinner></LoadingSpinner>
-    );
+    return <LoadingSpinner></LoadingSpinner>;
   }
 
   // Fallback if no user is found (though PrivateRoute usually handles this)
