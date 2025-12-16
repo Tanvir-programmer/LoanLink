@@ -13,57 +13,52 @@ import { auth } from "../firebase/firebase.init";
 
 const googleProvider = new GoogleAuthProvider();
 
-const AuthProvider = ({ children }) => {
+// 💥 THE FIX APPLIED HERE 💥
+// If props are undefined (which happens during certain render cycles),
+// it defaults to {} so destructuring children is safe.
+const AuthProvider = ({ children } = {}) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // ---------------- CREATE USER ----------------
 
-  // ---------------- CREATE USER ----------------
   const createUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
-  };
+  }; // ---------------- LOGIN ----------------
 
-  // ---------------- LOGIN ----------------
   const signInUser = (email, password) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
-  };
+  }; // ---------------- GOOGLE LOGIN ----------------
 
-  // ---------------- GOOGLE LOGIN ----------------
   const signInWithGoogle = async () => {
     setLoading(true);
-    const result = await signInWithPopup(auth, googleProvider);
+    const result = await signInWithPopup(auth, googleProvider); // 🔥 ensure fresh user is stored
 
-    // 🔥 ensure fresh user is stored
     setUser(result.user);
     setLoading(false);
     return result;
-  };
+  }; // ---------------- UPDATE PROFILE ----------------
 
-  // ---------------- UPDATE PROFILE (🔥 FIXED) ----------------
   const updateUserProfile = async (name, photoURL) => {
     if (!auth.currentUser) return;
 
     await updateProfile(auth.currentUser, {
       displayName: name,
       photoURL: photoURL,
-    });
+    }); // 🔥 FORCE React state update with fresh values
 
-    // 🔥 FORCE React state update with fresh values
     setUser({
       ...auth.currentUser,
       displayName: name,
       photoURL: photoURL,
     });
-  };
+  }; // ---------------- LOGOUT ----------------
 
-  // ---------------- LOGOUT ----------------
   const signOutUser = () => {
     setLoading(true);
     return signOut(auth);
-  };
+  }; // ---------------- AUTH STATE LISTENER ----------------
 
-  // ---------------- AUTH STATE LISTENER ----------------
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);

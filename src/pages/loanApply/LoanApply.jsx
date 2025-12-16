@@ -3,8 +3,10 @@ import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
 
-// --- Form Field Helper Components (Unchanged) ---
+// --- Input Components ---
+
 const InputField = ({
   label,
   name,
@@ -22,7 +24,6 @@ const InputField = ({
     <input
       id={name}
       type={type}
-      // Note: The placeholder prop is now defined in the main component usage
       placeholder={placeholder || label}
       {...register(name, {
         required: required ? `${label} is required` : false,
@@ -55,7 +56,6 @@ const TextAreaField = ({
     <textarea
       id={name}
       rows={rows}
-      // Note: The placeholder prop is now defined in the main component usage
       placeholder={placeholder || label}
       {...register(name, {
         required: required ? `${label} is required` : false,
@@ -72,10 +72,9 @@ const TextAreaField = ({
 );
 
 // --- Main Component ---
-
 const LoanApply = () => {
   const { user } = useContext(AuthContext);
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -84,37 +83,57 @@ const LoanApply = () => {
   } = useForm();
 
   const handleFormSubmission = async (data) => {
-    // Ensure numeric fields are correctly typed before sending
+    if (!user?.email) {
+      toast.error("User not logged in");
+      return;
+    }
+
+    // Validate required fields
+    if (
+      !data.firstName ||
+      !data.lastName ||
+      !data.loanAmount ||
+      !data.category
+    ) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
     const applicationData = {
-      ...data,
-      email: user?.email,
-      loanTitle: "Micro Loan",
-      interestRate: "8%",
-      status: "Pending",
-      applicationFeeStatus: "Unpaid",
-      createdAt: new Date(),
-      monthlyIncome: parseFloat(data.monthlyIncome),
-      loanAmount: parseFloat(data.loanAmount),
+      loanTitle: data.loanTitle || "Micro Loan",
+      loanAmount: Number(data.loanAmount),
+      category: data.category,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      userEmail: user.email,
+      status: "pending",
+      applicationFeeStatus: "unpaid",
+      application_date: new Date(),
+      monthlyIncome: parseFloat(data.monthlyIncome) || 0,
+      loanReason: data.loanReason || "",
+      address: data.address || "",
+      extraNotes: data.extraNotes || "",
     };
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/apply-loan",
+        `${import.meta.env.VITE_API_URL}/apply-loan`,
         applicationData
       );
 
       if (res.data.insertedId) {
         toast.success("Application Submitted!");
+        navigate("/");
+
         reset();
       } else {
-        toast.error(
-          "Submission failed: Server returned an unexpected response."
-        );
+        toast.error("Submission failed: Unexpected server response");
       }
     } catch (error) {
-      console.error("Submission Error:", error);
+      console.error("Submission Error:", error.response?.data || error.message);
       toast.error(
-        "Application failed to submit. Please verify your details and connection."
+        error.response?.data?.message ||
+          "Application failed. Please check your input."
       );
     }
   };
@@ -122,7 +141,7 @@ const LoanApply = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto bg-white shadow-2xl rounded-xl border border-gray-200 divide-y divide-gray-200">
-        {/* --- Header Section --- */}
+        {/* Header */}
         <div className="p-8 sm:p-10 text-center">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-800 tracking-tight">
             Micro Loan Application
@@ -134,7 +153,7 @@ const LoanApply = () => {
           </p>
         </div>
 
-        {/* --- Loan Summary Overview (Consistent Branding) --- */}
+        {/* Loan Summary */}
         <div className="bg-blue-50 p-6 sm:p-8">
           <h2 className="text-xl font-bold text-blue-700 mb-4 flex items-center">
             <span className="mr-2">🏦</span> Loan Product Details
@@ -165,66 +184,69 @@ const LoanApply = () => {
           </div>
         </div>
 
-        {/* --- Application Form --- */}
+        {/* Application Form */}
         <form
           onSubmit={handleSubmit(handleFormSubmission)}
           className="space-y-12 p-8 sm:p-10"
         >
-          {/* 1. Applicant Information */}
+          {/* Applicant Info */}
           <section className="space-y-6">
             <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-blue-500/50 pb-2">
               1. Applicant Information
             </h2>
-
             <div className="grid md:grid-cols-2 gap-6">
               <InputField
                 label="Legal First Name"
                 name="firstName"
                 register={register}
                 errors={errors}
-                placeholder="Enter your legal first name" // Updated
+                placeholder="Enter your legal first name"
               />
               <InputField
                 label="Legal Last Name"
                 name="lastName"
                 register={register}
                 errors={errors}
-                placeholder="Enter your legal last name" // Updated
+                placeholder="Enter your legal last name"
               />
             </div>
-
             <div className="grid md:grid-cols-2 gap-6">
               <InputField
                 label="Primary Contact Number"
                 name="contactNumber"
                 register={register}
                 errors={errors}
-                placeholder="e.g., +1 (555) 123-4567" // Updated
+                placeholder="e.g., +1 (555) 123-4567"
               />
               <InputField
                 label="National ID / Passport Number"
                 name="nationalId"
                 register={register}
                 errors={errors}
-                placeholder="Provide government issued ID number" // Updated
+                placeholder="Provide government issued ID number"
               />
             </div>
           </section>
 
-          {/* 2. Financial & Loan Details */}
+          {/* Financial & Loan */}
           <section className="space-y-6">
             <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-blue-500/50 pb-2">
               2. Financial and Loan Requirements
             </h2>
-
+            <InputField
+              label="Loan Category"
+              name="category"
+              register={register}
+              errors={errors}
+              placeholder="Enter loan category"
+            />
             <InputField
               label="Source of Income (Employer or Business Name)"
               name="incomeSource"
               register={register}
               errors={errors}
-              placeholder="Name of your employer or primary business" // Updated
+              placeholder="Name of your employer or primary business"
             />
-
             <div className="grid md:grid-cols-2 gap-6">
               <InputField
                 label="Estimated Monthly Income (Pre-tax)"
@@ -232,7 +254,7 @@ const LoanApply = () => {
                 register={register}
                 errors={errors}
                 type="number"
-                placeholder="Enter gross monthly income (e.g., 5500.00)" // Updated
+                placeholder="e.g., 5500.00"
               />
               <InputField
                 label="Requested Loan Amount"
@@ -240,34 +262,31 @@ const LoanApply = () => {
                 register={register}
                 errors={errors}
                 type="number"
-                placeholder="Enter requested amount (e.g., 10000.00)" // Updated
+                placeholder="e.g., 10000.00"
               />
             </div>
-
             <TextAreaField
-              label="Purpose of Loan (Briefly explain your need)"
+              label="Purpose of Loan"
               name="loanReason"
               register={register}
               errors={errors}
-              placeholder="State the primary reason for seeking this loan" // Updated
+              placeholder="State the primary reason for seeking this loan"
             />
           </section>
 
-          {/* 3. Residential Address */}
+          {/* Address */}
           <section className="space-y-6">
             <h2 className="text-2xl font-semibold text-gray-800 border-b-2 border-blue-500/50 pb-2">
               3. Residential Address & Notes
             </h2>
-
             <TextAreaField
               label="Current Full Residential Address"
               name="address"
               register={register}
               errors={errors}
               rows={3}
-              placeholder="Include Street, City, State, and Zip/Postal Code" // Updated
+              placeholder="Include Street, City, State, and Zip/Postal Code"
             />
-
             <TextAreaField
               label="Additional Notes (Optional)"
               name="extraNotes"
@@ -275,16 +294,15 @@ const LoanApply = () => {
               errors={errors}
               rows={2}
               required={false}
-              placeholder="Provide any information relevant to processing your application (optional)" // Updated
+              placeholder="Provide any information relevant to processing your application (optional)"
             />
           </section>
 
-          {/* --- Final Submission & Consent --- */}
+          {/* Submit */}
           <div className="pt-6 border-t border-gray-200">
             <p className="text-sm text-center text-gray-600 mb-6">
               By clicking "Submit Application," you confirm that all information
-              provided is accurate and grant us authorization to conduct
-              necessary verification checks.
+              provided is accurate.
             </p>
             <button
               type="submit"

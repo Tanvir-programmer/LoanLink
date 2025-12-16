@@ -18,9 +18,10 @@ import ManageLoans from "../components/Dashboard/Managers/ManageMyLoan/ManageMyL
 import UpdateLoans from "../components/Dashboard/Managers/updateLoans/UpdateLoans";
 import PendingApplications from "../components/Dashboard/Shared/PendingApplicatons";
 import ApprovedApplications from "../components/Dashboard/Shared/ApprovedApplications";
-import ManageUsers from "../components/Dashboard/Admin/ManageUsers";
+
 import LoanApplications from "../components/Dashboard/Admin/LoanApplications";
 import MyAppliedLoans from "../components/Dashboard/Users/MyAppliedLoans";
+import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 
 export const router = createBrowserRouter([
   {
