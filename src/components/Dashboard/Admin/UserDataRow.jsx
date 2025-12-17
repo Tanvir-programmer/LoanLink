@@ -1,124 +1,152 @@
-// src/components/Dashboard/Admin/UserDataRow.jsx
-
 import { useMutation } from "@tanstack/react-query";
 import useAxiosSecure from "../../../context/useAxiousSecure";
-// Recommend importing your Toast/SweetAlert library here (e.g., import Swal from 'sweetalert2')
+import toast from "react-hot-toast";
+import {
+  FaUserShield,
+  FaUserTie,
+  FaUserAlt,
+  FaTrashAlt,
+  FaArrowUp,
+  FaArrowDown,
+} from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const UserDataRow = ({ user, refetch }) => {
   const axiosSecure = useAxiosSecure();
 
-  // Helper function for styling the role badge
-  const getRoleBadge = (role) => {
-    switch (role) {
-      case "admin":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
-      case "manager":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
-      case "borrower":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300";
-      default:
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300";
-    }
-  };
-
-  // Define the mutation function for role change
-  const { mutateAsync, isPending } = useMutation({
+  // 1. Mutation for Role Change
+  const { mutateAsync: updateRole, isPending: isUpdating } = useMutation({
     mutationFn: async ({ email, newRole }) => {
       const response = await axiosSecure.patch(`/users/role/${email}`, {
         role: newRole,
       });
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       refetch();
-      // Swal.fire('Success', data.message, 'success'); // Example Toast
-      console.log("Role updated successfully:", data.message);
-    },
-    onError: (error) => {
-      const message = error.response?.data?.message || "Failed to update role.";
-      // Swal.fire('Error', message, 'error'); // Example Toast
-      console.error(message);
+      toast.success("Role updated successfully");
     },
   });
 
-  // Handler for button clicks
-  const handleRoleChange = async (newRole) => {
-    // Simple confirmation before proceeding (You should use SweetAlert)
-    if (
-      !confirm(
-        `Are you sure you want to change ${user.email}'s role to ${newRole}?`
-      )
-    ) {
-      return;
-    }
+  // 2. Mutation for Delete User
+  const { mutateAsync: deleteUser, isPending: isDeleting } = useMutation({
+    mutationFn: async (email) => {
+      const response = await axiosSecure.delete(`/users/${email}`);
+      return response.data;
+    },
+    onSuccess: () => {
+      refetch();
+      toast.success("User removed successfully");
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Delete failed");
+    },
+  });
 
-    try {
-      // Prevent changing the role of the 'admin' user for safety
-      if (user.role === "admin") {
-        console.warn("Cannot change the role of the primary admin.");
-        return;
+  // --- Handlers ---
+  const handleRoleChange = async (newRole) => {
+    if (user.role === "admin") return;
+    Swal.fire({
+      title: "Change Role?",
+      text: `Update ${user.name} to ${newRole}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#4F46E5",
+      confirmButtonText: "Confirm",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await updateRole({ email: user.email, newRole });
       }
-      await mutateAsync({ email: user.email, newRole });
-    } catch (error) {
-      // Error handled in onError of useMutation
+    });
+  };
+
+  const handleDelete = async () => {
+    if (user.role === "admin") {
+      return toast.error("Primary Admin cannot be deleted!");
     }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "This user will be permanently removed from the database.",
+      icon: "error",
+      showCancelButton: true,
+      confirmButtonColor: "#EF4444",
+      confirmButtonText: "Yes, Delete User",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await deleteUser(user.email);
+      }
+    });
   };
 
   return (
-    <tr className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
-      {/* 1. Name / Email Column */}
-      <td className="px-5 py-3 text-sm">
-        <p className="whitespace-no-wrap text-gray-900 dark:text-white font-medium">
-          {user?.displayName || "N/A"}
-        </p>
-        <p className="whitespace-no-wrap text-gray-500 dark:text-gray-400 text-xs">
-          {user?.email}
-        </p>
+    <tr className="border-b border-gray-100 dark:border-slate-800 hover:bg-slate-50 transition-colors">
+      {/* Name and Email */}
+      <td className="px-6 py-5 whitespace-nowrap">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold">
+            {user?.name?.charAt(0) || "U"}
+          </div>
+          <div>
+            <div className="text-sm font-bold text-gray-800 dark:text-white">
+              {user?.name || "N/A"}
+            </div>
+            <div className="text-xs text-gray-500">{user?.email}</div>
+          </div>
+        </div>
       </td>
 
-      {/* 2. Role Column (Styled Badge) */}
-      <td className="px-5 py-3 text-sm">
+      {/* Role Badge with Icons */}
+      <td className="px-6 py-5 whitespace-nowrap">
         <span
-          className={`relative inline-block px-3 py-1 font-semibold leading-tight rounded-full ${getRoleBadge(
-            user?.role
-          )}`}
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border 
+          ${
+            user.role === "admin"
+              ? "bg-red-50 text-red-600 border-red-100"
+              : user.role === "manager"
+              ? "bg-blue-50 text-blue-600 border-blue-100"
+              : "bg-emerald-50 text-emerald-600 border-emerald-100"
+          }`}
         >
-          {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1) || "N/A"}
+          {user.role === "admin" && <FaUserShield />}
+          {user.role === "manager" && <FaUserTie />}
+          {user.role === "borrower" && <FaUserAlt />}{" "}
+          {/* ✅ Added Borrower Icon */}
+          {user.role || "Borrower"}
         </span>
       </td>
 
-      {/* 3. Actions Column (Role Change Buttons) */}
-      <td className="px-5 py-3 text-sm space-x-2">
-        {/* Button to promote to Manager */}
-        {user.role !== "manager" && user.role !== "admin" && (
+      {/* Action Buttons */}
+      <td className="px-6 py-5 whitespace-nowrap text-right space-x-3">
+        {/* Role Logic */}
+        {user.role === "borrower" && (
           <button
             onClick={() => handleRoleChange("manager")}
-            className="text-white px-3 py-1 text-xs font-medium rounded bg-blue-500 hover:bg-blue-600 transition duration-150"
-            disabled={isPending}
+            className="btn btn-ghost btn-xs text-indigo-600 hover:bg-indigo-50 normal-case"
+            disabled={isUpdating}
           >
-            {isPending ? "Updating..." : "Make Manager"}
+            <FaArrowUp /> Make Manager
           </button>
         )}
 
-        {/* Button to demote to Borrower */}
         {user.role === "manager" && (
           <button
             onClick={() => handleRoleChange("borrower")}
-            className="text-white px-3 py-1 text-xs font-medium rounded bg-yellow-500 hover:bg-yellow-600 transition duration-150"
-            disabled={isPending}
+            className="btn btn-ghost btn-xs text-amber-600 hover:bg-amber-50 normal-case"
+            disabled={isUpdating}
           >
-            {isPending ? "Updating..." : "Demote"}
+            <FaArrowDown /> Demote
           </button>
         )}
 
-        {/* Suspend Button (Requires separate modal/logic) */}
+        {/* Delete Action */}
         {user.role !== "admin" && (
           <button
-            // onClick={() => handleSuspend(user.email)} // Placeholder for suspend logic
-            className="text-white px-3 py-1 text-xs font-medium rounded bg-red-500 hover:bg-red-600 transition duration-150 ml-2"
-            disabled={isPending}
+            onClick={handleDelete}
+            className="p-2 text-gray-400 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50"
+            disabled={isDeleting}
+            title="Delete User"
           >
-            Suspend
+            <FaTrashAlt />
           </button>
         )}
       </td>

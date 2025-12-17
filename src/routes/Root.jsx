@@ -23,6 +23,9 @@ import LoanApplications from "../components/Dashboard/Admin/LoanApplications";
 import MyAppliedLoans from "../components/Dashboard/Users/MyAppliedLoans";
 import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 
+import Payment from "../components/Dashboard/Payment/Payment";
+// import CheckoutForm from "../components/Dashboard/Payment/CheckoutForm";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -165,6 +168,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <MyAppliedLoans />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/dashboard/payment/:id",
+        element: (
+          <PrivateRoute>
+            <Payment></Payment>
           </PrivateRoute>
         ),
       },

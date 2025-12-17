@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, _useEffect } from "react";
 import { NavLink, useNavigate } from "react-router";
 import {
   FaSignOutAlt,
@@ -48,7 +48,6 @@ const AuthButton = ({ isLoggedIn }) => {
     </div>
   );
 };
-
 // --- Navbar Component ---
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -79,12 +78,43 @@ const Navbar = () => {
     <div className="bg-white shadow-lg sticky top-0 z-50">
       <div className="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20">
         {/* Logo Section */}
-        <div className="navbar-start">
+        <div className="navbar-start ">
           <NavLink
             to="/"
-            className="text-2xl font-extrabold text-primary tracking-wider btn btn-ghost normal-case"
+            className="group flex items-center gap-3 no-underline transition-all duration-300"
           >
-            LoanLink
+            {/* The Icon: Using a sharp, modern indigo/blue gradient */}
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-[#0F172A] shadow-lg shadow-blue-200 group-hover:bg-blue-600 transition-colors duration-300">
+              {/* Negative space LL icon */}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                className="h-5 w-5 text-white"
+              >
+                <path
+                  d="M7 17V7h4M13 17V7h4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M7 17h4M13 17h4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+
+            {/* The Typography */}
+            <div className="flex flex-col leading-tight">
+              <span className="text-xl font-extrabold tracking-tighter text-[#0F172A] lg:text-2xl">
+                Loan<span className="text-blue-600">Link</span>
+              </span>
+              {/* <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-blue-500/80">
+                Verified Finance
+              </span> */}
+            </div>
           </NavLink>
         </div>
 
