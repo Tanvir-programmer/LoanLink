@@ -6,56 +6,63 @@ const Hero = () => {
   const navigate = useNavigate();
 
   const heroImageUrl =
-    "https://images.unsplash.com/photo-1556740758-9430ef899482?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fGg%3D";
+    "https://images.unsplash.com/photo-1556740758-9430ef899482?q=80&w=1974&auto=format&fit=crop";
 
   return (
-    <div
-      className="relative w-full h-[70vh] sm:h-[70vh] md:h-[60vh] lg:h-[70vh] xl:h-[80vh] my-6 sm:my-8 shadow-2xl rounded-2xl overflow-hidden flex items-center justify-center"
+    <section
+      className="relative w-full h-[55vh] md:h-[60vh] mt-6 rounded-xl overflow-hidden shadow-lg"
       style={{
         backgroundImage: `url(${heroImageUrl})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      {/* Overlay for readability */}
-      <div className="absolute inset-0 bg-gray-900 bg-opacity-70 backdrop-blur-sm"></div>
+      {/* Professional gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/70 to-gray-900/40"></div>
 
-      {/* Hero content */}
-      <div className="relative z-10 text-center text-white px-3 sm:px-6 md:px-8 lg:px-16 max-w-full overflow-hidden">
-        <div className="max-w-3xl sm:max-w-4xl mx-auto break-words">
-          <h1 className="text-2xl xs:text-2xl sm:text-4xl md:text-4xl lg:text-5xl font-extrabold mb-4 sm:mb-5 leading-snug sm:leading-tight tracking-wide">
-            Empower Your Financial Journey
-          </h1>
-
-          <p className="mb-6 sm:mb-12 text-sm xs:text-sm sm:text-base md:text-lg font-medium text-gray-200 px-2 sm:px-4 break-words">
-            Access competitive financing solutions with a seamless and secure
-            digital application process.
-          </p>
-
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-5">
-            <button
-              onClick={() => navigate("/loan-details/_1")}
-              className="w-full sm:w-auto px-5 sm:px-8 py-3 text-sm sm:text-lg font-bold rounded-full bg-primary text-white shadow-xl hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.02]"
-            >
-              <span className="flex items-center justify-center">
-                <FaMoneyBillWave className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
-                Start Your Application
+      {/* Content */}
+      <div className="relative z-10 h-full flex items-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 w-full">
+          <div className="max-w-2xl text-white">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
+              Smart Financing,
+              <span className="block text-primary mt-1">
+                Built for Your Future
               </span>
-            </button>
+            </h1>
 
-            <button
-              onClick={() => navigate("/allloans")}
-              className="w-full sm:w-auto px-5 sm:px-8 py-3 text-sm sm:text-lg font-bold rounded-full border-2 border-white text-white bg-transparent hover:bg-white hover:text-gray-900 transition-colors duration-300"
-            >
-              <span className="flex items-center justify-center">
-                <FaSearchDollar className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-3" />
-                Compare All Options
-              </span>
-            </button>
+            <p className="mt-5 text-sm sm:text-base text-gray-200 leading-relaxed">
+              Apply for trusted loan solutions through a secure, transparent,
+              and fully digital process — designed for speed and clarity.
+            </p>
+
+            {/* CTA buttons */}
+            <div className="mt-8 flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={() => navigate("/allloans")}
+                className="inline-flex items-center justify-center px-7 py-3 text-sm sm:text-base font-semibold rounded-lg bg-primary text-white shadow-md hover:bg-primary/90 transition"
+              >
+                <FaMoneyBillWave className="mr-2" />
+                Apply Now
+              </button>
+
+              <button
+                onClick={() => navigate("/allloans")}
+                className="inline-flex items-center justify-center px-7 py-3 text-sm sm:text-base font-semibold rounded-lg border border-white/70 text-white hover:bg-white hover:text-gray-900 transition"
+              >
+                <FaSearchDollar className="mr-2" />
+                View All Loans
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Scroll hint */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-gray-300 text-xs tracking-wide opacity-80 hidden md:block">
+        Scroll to explore ↓
+      </div>
+    </section>
   );
 };
 

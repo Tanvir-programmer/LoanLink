@@ -1,18 +1,23 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router";
 import { AuthContext } from "../../context/AuthContext";
+import useRole from "../../context/useRole";
 
 const LoanDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, loading } = useContext(AuthContext);
+  const { user, loading: authLoading } = useContext(AuthContext);
+
+  // ✅ This hook now correctly fetches role based on email
+  const [role, isRoleLoading] = useRole();
 
   const [loan, setLoan] = useState(null);
   const [loanLoading, setLoanLoading] = useState(true);
 
-  // Determine if user can apply
+  // ✅ Role Logic: Disable for Admin and Manager
+  const userRole = role?.toLowerCase();
   const canApply =
-    user && user.email && user.role !== "Admin" && user.role !== "Manager"; // Assuming your backend returns user.role
+    user && user.email && userRole !== "admin" && userRole !== "manager";
 
   useEffect(() => {
     const fetchLoanDetails = async () => {
@@ -28,7 +33,6 @@ const LoanDetails = () => {
         setLoanLoading(false);
       }
     };
-
     fetchLoanDetails();
   }, [id]);
 
@@ -37,10 +41,14 @@ const LoanDetails = () => {
     navigate(`/loan-application/${id}`);
   };
 
-  if (loanLoading || loading) {
+  // ✅ Show loading until BOTH Auth and Role are finished
+  if (loanLoading || authLoading || isRoleLoading) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-50">
-        <p className="text-xl text-gray-700">Loading loan details...</p>
+        <span className="loading loading-spinner loading-lg text-indigo-600"></span>
+        <p className="ml-4 text-xl text-gray-700 font-medium">
+          Verifying details...
+        </p>
       </div>
     );
   }
@@ -48,7 +56,7 @@ const LoanDetails = () => {
   if (!loan) {
     return (
       <div className="flex justify-center items-center h-screen bg-gray-50">
-        <p className="text-xl text-red-500">Loan not found.</p>
+        <p className="text-xl text-red-500 font-bold">Loan not found.</p>
       </div>
     );
   }
@@ -56,7 +64,6 @@ const LoanDetails = () => {
   return (
     <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8 bg-white min-h-screen">
       <div className="max-w-4xl mx-auto">
-        {/* Loan Info */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
           <div className="lg:col-span-2">
             <p className="text-sm font-semibold uppercase text-indigo-600 tracking-wider mb-2">
@@ -69,9 +76,9 @@ const LoanDetails = () => {
               {loan.description}
             </p>
           </div>
-          <div className="lg:col-span-1 h-64 overflow-hidden rounded-xl shadow-lg">
+          <div className="lg:col-span-1 h-64 overflow-hidden rounded-xl shadow-lg border border-gray-100">
             <img
-              src={loan.imageUrl}
+              src={loan.imageUrl || "https://via.placeholder.com/400x300"}
               alt={loan.title}
               className="w-full h-full object-cover"
             />
@@ -80,18 +87,21 @@ const LoanDetails = () => {
 
         <hr className="my-8 border-gray-200" />
 
-        {/* Interest & Max Limit */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center p-6 bg-indigo-50 border border-indigo-200 rounded-xl shadow-inner mb-10">
-          <div className="flex space-x-12 mb-6 lg:mb-0">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center p-8 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm mb-12">
+          <div className="flex gap-12 mb-6 lg:mb-0">
             <div>
-              <p className="text-sm font-medium text-gray-600">Interest Rate</p>
-              <p className="text-3xl font-extrabold text-gray-900 mt-1">
+              <p className="text-xs uppercase font-bold text-gray-400 tracking-widest">
+                Interest Rate
+              </p>
+              <p className="text-3xl font-black text-indigo-600 mt-1">
                 {loan.interest}
               </p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-600">Maximum Limit</p>
-              <p className="text-3xl font-extrabold text-gray-900 mt-1">
+              <p className="text-xs uppercase font-bold text-gray-400 tracking-widest">
+                Maximum Limit
+              </p>
+              <p className="text-3xl font-black text-gray-900 mt-1">
                 {loan.maxLimit}
               </p>
             </div>
@@ -100,55 +110,53 @@ const LoanDetails = () => {
           <button
             onClick={handleApplyNow}
             disabled={!canApply}
-            className={`py-3 px-8 text-lg font-semibold rounded-lg transition duration-200 w-full lg:w-auto ${
-              canApply
-                ? "bg-indigo-600 text-white shadow-md hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-500/50"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
-            }`}
-            title={
-              !user
-                ? "Please log in to apply"
-                : user.role === "Admin"
-                ? "Admins cannot apply"
-                : user.role === "Manager"
-                ? "Managers cannot apply"
-                : "Apply for this loan"
-            }
+            className={`py-4 px-10 text-lg font-bold rounded-xl transition-all duration-300 w-full lg:w-auto shadow-lg 
+              ${
+                canApply
+                  ? "bg-indigo-600 text-white hover:bg-indigo-700 hover:-translate-y-1 active:scale-95 shadow-indigo-200"
+                  : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
+              }`}
           >
-            Apply Now
+            {canApply ? "Apply Now" : "Restricted Access"}
           </button>
         </div>
 
-        {/* EMI Plans */}
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Available EMI Plans
-        </h2>
-        <div className="overflow-x-auto shadow-md rounded-lg">
+        <div className="flex items-center gap-2 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Available EMI Plans
+          </h2>
+          <div className="h-1 flex-grow bg-gray-100 rounded-full"></div>
+        </div>
+
+        <div className="overflow-hidden border border-gray-200 rounded-2xl shadow-sm">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
+            <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
                   Duration
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Annual Interest Rate
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  Annual Rate
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Estimated Monthly Payment
+                <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+                  Estimated Monthly
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-100">
               {loan.emiPlans?.map((plan, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    **{plan.duration}**
+                <tr
+                  key={index}
+                  className="hover:bg-indigo-50/30 transition-colors"
+                >
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 italic">
+                    {plan.duration}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {plan.rate}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 font-semibold">
-                    (Calculation Required)
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600 font-bold">
+                    Calculated at Checkout
                   </td>
                 </tr>
               ))}

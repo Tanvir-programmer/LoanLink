@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { FaEye, FaFilter, FaTrashAlt } from "react-icons/fa";
+import { FaEye, FaFilter } from "react-icons/fa";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "../Payment/CheckoutForm";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = loadStripe(
+  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+);
 
 const LoanApplications = () => {
   const [applications, setApplications] = useState([]);
@@ -16,6 +18,8 @@ const LoanApplications = () => {
   const [selectedLoan, setSelectedLoan] = useState(null);
   const [viewingLoan, setViewingLoan] = useState(null);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     fetchApplications();
   }, []);
@@ -23,37 +27,13 @@ const LoanApplications = () => {
   const fetchApplications = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/loan-applications`
-      );
+      const res = await axios.get(`${API_URL}/loan-applications`);
       setApplications(res.data);
       setFilteredApps(res.data);
-    } catch (error) {
+    } catch {
       toast.error("Failed to load applications.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id) => {
-    // This was the cause of the "Normal Alert"
-    const confirm = window.confirm(
-      "Are you sure you want to cancel this loan application?"
-    );
-    if (!confirm) return;
-
-    try {
-      const res = await axios.delete(
-        `${import.meta.env.VITE_API_URL}/loan-applications/${id}`
-      );
-      if (res.data.deletedCount > 0) {
-        toast.success("Application removed.");
-        const remaining = applications.filter((app) => app._id !== id);
-        setApplications(remaining);
-        setFilteredApps(remaining);
-      }
-    } catch (error) {
-      toast.error("Failed to delete.");
     }
   };
 
@@ -62,19 +42,21 @@ const LoanApplications = () => {
     if (status === "all") {
       setFilteredApps(applications);
     } else {
-      const filtered = applications.filter(
-        (app) => app.status?.toLowerCase() === status.toLowerCase()
+      setFilteredApps(
+        applications.filter(
+          (app) => app.status?.toLowerCase() === status.toLowerCase()
+        )
       );
-      setFilteredApps(filtered);
     }
   };
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <span className="loading loading-spinner loading-lg text-indigo-600"></span>
       </div>
     );
+  }
 
   return (
     <div className="p-6 bg-white min-h-screen rounded-2xl shadow-sm">
@@ -83,7 +65,9 @@ const LoanApplications = () => {
           <h2 className="text-3xl font-extrabold text-gray-900">
             Loan Applications
           </h2>
-          <p className="text-gray-500 text-sm">Review borrower submissions</p>
+          <p className="text-gray-500 text-sm">
+            Review borrower submissions
+          </p>
         </div>
 
         <div className="flex items-center gap-3 bg-gray-50 p-2 rounded-lg border">
@@ -156,20 +140,12 @@ const LoanApplications = () => {
                   )}
                 </td>
                 <td className="text-center">
-                  <div className="flex justify-center gap-2">
-                    <button
-                      onClick={() => setViewingLoan(app)}
-                      className="btn btn-sm btn-circle btn-ghost text-indigo-500 shadow-none"
-                    >
-                      <FaEye size={16} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(app._id)}
-                      className="btn btn-sm btn-circle btn-ghost text-red-500 shadow-none"
-                    >
-                      <FaTrashAlt size={14} />
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => setViewingLoan(app)}
+                    className="btn btn-sm btn-circle btn-ghost text-indigo-500"
+                  >
+                    <FaEye size={16} />
+                  </button>
                 </td>
               </tr>
             ))}
@@ -177,7 +153,7 @@ const LoanApplications = () => {
         </table>
       </div>
 
-      {/* MODALS */}
+      {/* VIEW MODAL */}
       {viewingLoan && (
         <div className="modal modal-open">
           <div className="modal-box bg-white">
@@ -211,6 +187,7 @@ const LoanApplications = () => {
         </div>
       )}
 
+      {/* PAYMENT MODAL */}
       {selectedLoan && (
         <div className="modal modal-open">
           <div className="modal-box bg-white max-w-md relative">
