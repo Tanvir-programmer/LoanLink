@@ -14,21 +14,17 @@ const LoanDetails = () => {
 
   /* ---------------- ROLE LOGIC ---------------- */
   const userRole = role?.toLowerCase();
-  const canApply =
-    user && user.email && userRole !== "admin" && userRole !== "manager";
+  const canApply = user && user.email && userRole === "user"; // ✅ only user can apply
 
-  /* ---------------- EMI CALCULATION (FIXED) ---------------- */
+  /* ---------------- EMI CALCULATION ---------------- */
   const calculateEMI = (principal, annualRate, duration) => {
     const P = parseFloat(String(principal).replace(/[^0-9.]/g, ""));
-
     const rate = parseFloat(String(annualRate).replace(/[^0-9.]/g, ""));
-
     const n = parseInt(String(duration).replace(/[^0-9]/g, ""), 10);
 
     if (!P || !rate || !n) return 0;
 
     const r = rate / 12 / 100;
-
     return (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
   };
 
@@ -37,7 +33,6 @@ const LoanDetails = () => {
     const fetchLoanDetails = async () => {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/loans`);
-
         if (!res.ok) throw new Error("Failed to fetch loans");
 
         const loans = await res.json();
@@ -120,7 +115,7 @@ const LoanDetails = () => {
                 Interest Rate
               </p>
               <p className="mt-1 text-3xl font-black text-indigo-600">
-                {loan.interest}
+                {loan.interest}%
               </p>
             </div>
 
@@ -144,7 +139,11 @@ const LoanDetails = () => {
                   : "cursor-not-allowed bg-gray-200 text-gray-400"
               }`}
           >
-            {canApply ? "Apply For Loan" : "Borrowers Only"}
+            {!user
+              ? "Login to Apply"
+              : userRole !== "user"
+              ? "Only Borrowers Can Apply"
+              : "Apply For Loan"}
           </button>
         </div>
 
@@ -181,10 +180,10 @@ const LoanDetails = () => {
                   return (
                     <tr key={idx} className="transition hover:bg-indigo-50/30">
                       <td className="px-6 py-4 text-sm font-bold text-gray-900">
-                        {plan.duration}
+                        {plan.duration} months
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {plan.rate}
+                        {plan.rate}%
                       </td>
                       <td className="px-6 py-4 text-sm font-bold text-indigo-600">
                         {emi.toFixed(2)}
