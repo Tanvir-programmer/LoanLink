@@ -10,16 +10,27 @@ const ManageUsers = () => {
     data: users = [],
     isLoading,
     refetch,
+    isError, // ✅ Added for better error tracking
+    error,
   } = useQuery({
     queryKey: ["all-users"],
     queryFn: async () => {
-      // This is the fixed endpoint that returns all users
+      // ✅ Now this call automatically carries the JWT Cookie
       const result = await axiosSecure.get(`/users`);
       return result.data;
     },
   });
 
   if (isLoading) return <LoadingSpinner />;
+
+  // ✅ Simple error handling UI
+  if (isError) {
+    return (
+      <div className="p-8 text-center text-red-500">
+        Error loading users: {error.message}
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-8">

@@ -6,9 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "../Payment/CheckoutForm";
 
-const stripePromise = loadStripe(
-  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
-);
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const LoanApplications = () => {
   const [applications, setApplications] = useState([]);
@@ -65,9 +63,7 @@ const LoanApplications = () => {
           <h2 className="text-3xl font-extrabold text-gray-900">
             Loan Applications
           </h2>
-          <p className="text-gray-500 text-sm">
-            Review borrower submissions
-          </p>
+          <p className="text-gray-500 text-sm">Review borrower submissions</p>
         </div>
 
         <div className="flex items-center gap-3 bg-gray-50 p-2 rounded-lg border">

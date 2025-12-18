@@ -10,7 +10,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../firebase/firebase.init";
-
+import axios from "axios"; // ✅ Make sure axios is imported
 const googleProvider = new GoogleAuthProvider();
 
 // 💥 THE FIX APPLIED HERE 💥
@@ -60,14 +60,45 @@ const AuthProvider = ({ children } = {}) => {
   }; // ---------------- AUTH STATE LISTENER ----------------
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      console.log("Auth State Changed. Current User:", currentUser?.email); // 👈 Debugging log
       setUser(currentUser);
-      setLoading(false);
+
+      if (currentUser?.email) {
+        const loggedUser = { email: currentUser.email };
+        try {
+          const { data } = await axios.post(
+            `${import.meta.env.VITE_API_URL}/jwt`,
+            loggedUser,
+            { withCredentials: true }
+          );
+          if (data.success) {
+            console.log("✅ Token cookie set successfully");
+          }
+        } catch (err) {
+          console.error("❌ JWT Error:", err);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        // Clear cookie on logout
+        try {
+          await axios.post(
+            `${import.meta.env.VITE_API_URL}/logout`,
+            {},
+            { withCredentials: true }
+          );
+          console.log("Logout: Cookie cleared");
+        } catch (err) {
+          console.error("Logout Error:", err);
+        } finally {
+          setLoading(false);
+        }
+      }
     });
 
     return () => unsubscribe();
   }, []);
-
   const authInfo = {
     createUser,
     updateUserProfile,

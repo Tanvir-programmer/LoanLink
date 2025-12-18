@@ -17,6 +17,7 @@ const UserDataRow = ({ user, refetch }) => {
   // 1. Mutation for Role Change
   const { mutateAsync: updateRole, isPending: isUpdating } = useMutation({
     mutationFn: async ({ email, newRole }) => {
+      // ✅ Now sends JWT cookie automatically
       const response = await axiosSecure.patch(`/users/role/${email}`, {
         role: newRole,
       });
@@ -26,11 +27,15 @@ const UserDataRow = ({ user, refetch }) => {
       refetch();
       toast.success("Role updated successfully");
     },
+    onError: (err) => {
+      toast.error(err.response?.data?.message || "Role update failed");
+    },
   });
 
   // 2. Mutation for Delete User
   const { mutateAsync: deleteUser, isPending: isDeleting } = useMutation({
     mutationFn: async (email) => {
+      // ✅ Now sends JWT cookie automatically
       const response = await axiosSecure.delete(`/users/${email}`);
       return response.data;
     },
@@ -48,14 +53,18 @@ const UserDataRow = ({ user, refetch }) => {
     if (user.role === "admin") return;
     Swal.fire({
       title: "Change Role?",
-      text: `Update ${user.name} to ${newRole}?`,
+      text: `Update ${user?.name || "this user"} to ${newRole}?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#4F46E5",
       confirmButtonText: "Confirm",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await updateRole({ email: user.email, newRole });
+        try {
+          await updateRole({ email: user.email, newRole });
+        } catch (error) {
+          console.error(error);
+        }
       }
     });
   };
@@ -73,7 +82,11 @@ const UserDataRow = ({ user, refetch }) => {
       confirmButtonText: "Yes, Delete User",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await deleteUser(user.email);
+        try {
+          await deleteUser(user.email);
+        } catch (error) {
+          console.error(error);
+        }
       }
     });
   };
@@ -109,8 +122,7 @@ const UserDataRow = ({ user, refetch }) => {
         >
           {user.role === "admin" && <FaUserShield />}
           {user.role === "manager" && <FaUserTie />}
-          {user.role === "borrower" && <FaUserAlt />}{" "}
-          {/* ✅ Added Borrower Icon */}
+          {(user.role === "borrower" || !user.role) && <FaUserAlt />}
           {user.role || "Borrower"}
         </span>
       </td>
@@ -118,13 +130,18 @@ const UserDataRow = ({ user, refetch }) => {
       {/* Action Buttons */}
       <td className="px-6 py-5 whitespace-nowrap text-right space-x-3">
         {/* Role Logic */}
-        {user.role === "borrower" && (
+        {(user.role === "borrower" || !user.role) && (
           <button
             onClick={() => handleRoleChange("manager")}
             className="btn btn-ghost btn-xs text-indigo-600 hover:bg-indigo-50 normal-case"
             disabled={isUpdating}
           >
-            <FaArrowUp /> Make Manager
+            {isUpdating ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <FaArrowUp />
+            )}{" "}
+            Make Manager
           </button>
         )}
 
@@ -134,7 +151,12 @@ const UserDataRow = ({ user, refetch }) => {
             className="btn btn-ghost btn-xs text-amber-600 hover:bg-amber-50 normal-case"
             disabled={isUpdating}
           >
-            <FaArrowDown /> Demote
+            {isUpdating ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <FaArrowDown />
+            )}{" "}
+            Demote
           </button>
         )}
 
@@ -146,7 +168,11 @@ const UserDataRow = ({ user, refetch }) => {
             disabled={isDeleting}
             title="Delete User"
           >
-            <FaTrashAlt />
+            {isDeleting ? (
+              <span className="loading loading-spinner loading-xs"></span>
+            ) : (
+              <FaTrashAlt />
+            )}
           </button>
         )}
       </td>
