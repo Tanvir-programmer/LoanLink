@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext";
+import { AuthContext } from "./AuthContext"; // Import the context created above
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -13,71 +13,58 @@ import { auth } from "../firebase/firebase.init";
 
 const googleProvider = new GoogleAuthProvider();
 
-const AuthProvider = ({ children } = {}) => {
+const AuthProvider = ({ children }) => {
+  // Ensure { children } is here
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ---------------- CREATE USER ----------------
   const createUser = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
-  // ---------------- LOGIN ----------------
   const signInUser = (email, password) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
   };
 
-  // ---------------- GOOGLE LOGIN ----------------
   const signInWithGoogle = async () => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      setUser(result.user);
       return result;
     } finally {
       setLoading(false);
     }
   };
 
-  // ---------------- UPDATE PROFILE ----------------
   const updateUserProfile = async (name, photoURL) => {
     if (!auth.currentUser) return;
     await updateProfile(auth.currentUser, {
       displayName: name,
-      photoURL: photoURL,
+      photoURL,
     });
-    // Update local state with fresh values
-    setUser({
-      ...auth.currentUser,
-      displayName: name,
-      photoURL: photoURL,
-    });
+    setUser({ ...auth.currentUser });
   };
 
-  // ---------------- LOGOUT ----------------
   const signOutUser = () => {
     setLoading(true);
     return signOut(auth);
   };
 
-  // ---------------- AUTH STATE LISTENER ----------------
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("Auth State Changed. Current User:", currentUser?.email);
       setUser(currentUser);
-      setLoading(false); // Just set loading to false, no JWT calls needed
+      setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
 
   const authInfo = {
     createUser,
-    updateUserProfile,
     signInUser,
     signInWithGoogle,
+    updateUserProfile,
     signOutUser,
     user,
     loading,

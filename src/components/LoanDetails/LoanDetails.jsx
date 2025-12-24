@@ -14,7 +14,8 @@ const LoanDetails = () => {
 
   /* ---------------- ROLE LOGIC ---------------- */
   const userRole = role?.toLowerCase();
-  const canApply = user && user.email && userRole === "user"; // ✅ only user can apply
+  // Changed to 'borrower' to match your backend logic
+  const canApply = user && user.email && userRole === "borrower";
 
   /* ---------------- EMI CALCULATION ---------------- */
   const calculateEMI = (principal, annualRate, duration) => {
@@ -32,12 +33,11 @@ const LoanDetails = () => {
   useEffect(() => {
     const fetchLoanDetails = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/loans`);
-        if (!res.ok) throw new Error("Failed to fetch loans");
+        // FIXED: Using your specific backend ID route
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/loans/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch loan");
 
-        const loans = await res.json();
-        const selectedLoan = loans.find((l) => l._id === id);
-
+        const selectedLoan = await res.json();
         setLoan(selectedLoan || null);
       } catch (error) {
         console.error(error);
@@ -47,7 +47,7 @@ const LoanDetails = () => {
       }
     };
 
-    fetchLoanDetails();
+    if (id) fetchLoanDetails();
   }, [id]);
 
   /* ---------------- APPLY ---------------- */
@@ -115,7 +115,7 @@ const LoanDetails = () => {
                 Interest Rate
               </p>
               <p className="mt-1 text-3xl font-black text-indigo-600">
-                {loan.interest}%
+                {loan.interest}
               </p>
             </div>
 
@@ -141,7 +141,7 @@ const LoanDetails = () => {
           >
             {!user
               ? "Login to Apply"
-              : userRole !== "user"
+              : userRole !== "borrower"
               ? "Only Borrowers Can Apply"
               : "Apply For Loan"}
           </button>
@@ -183,7 +183,7 @@ const LoanDetails = () => {
                         {plan.duration} months
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {plan.rate}%
+                        {plan.rate}
                       </td>
                       <td className="px-6 py-4 text-sm font-bold text-indigo-600">
                         {emi.toFixed(2)}

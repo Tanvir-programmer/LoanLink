@@ -4,13 +4,15 @@ import { NavLink, useNavigate } from "react-router";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-hot-toast";
 import { saveOrUpdateUser } from "../../utils/utils";
+
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const { signInWithGoogle, setUser, loginUser } = useContext(AuthContext);
+  const { signInWithGoogle, signInUser, setUser } = useContext(AuthContext);
+
   const navigate = useNavigate();
 
-  // Email/Password Login Handler
+  // ---------------- EMAIL / PASSWORD LOGIN ----------------
   const handleLogin = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -18,13 +20,11 @@ const Login = () => {
     const password = form.password.value;
 
     try {
-      const result = await loginUser(email, password);
+      const result = await signInUser(email, password);
 
-      // Update database info
-      const dbUserData = {
+      await saveOrUpdateUser({
         email: result.user.email,
-      };
-      await saveOrUpdateUser(dbUserData);
+      });
 
       setUser(result.user);
       toast.success("Login successful!");
@@ -33,23 +33,22 @@ const Login = () => {
       toast.error(err.message);
     }
   };
-  // handleGoogleRegister
-  // Handle Google Signin
+
+  // ---------------- GOOGLE LOGIN ----------------
   const handleGoogleRegister = async () => {
     try {
-      //User Registration using google
       const { user } = await signInWithGoogle();
 
       await saveOrUpdateUser({
-        name: user?.displayName,
-        email: user?.email,
-        image: user?.photoURL,
+        name: user.displayName,
+        email: user.email,
+        image: user.photoURL,
       });
+
+      toast.success("Login successful!");
       navigate("/");
-      toast.success("Login Successful");
     } catch (err) {
-      console.log(err);
-      toast.error(err?.message);
+      toast.error(err.message);
     }
   };
 
@@ -85,7 +84,7 @@ const Login = () => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -96,15 +95,6 @@ const Login = () => {
             <p>Your credentials are securely encrypted.</p>
           </div>
 
-          <div className="text-right mt-2">
-            <button
-              type="button"
-              className="text-sm text-indigo-600 hover:underline"
-            >
-              Forgot Password?
-            </button>
-          </div>
-
           <button
             type="submit"
             className="btn btn-primary w-full mt-5 mb-4 font-bold text-lg text-white"
@@ -113,14 +103,14 @@ const Login = () => {
           </button>
         </form>
 
+        {/* Google Login */}
         <button
           onClick={handleGoogleRegister}
-          type="button"
-          className="w-full flex items-center justify-center py-3 border border-gray-300 bg-white text-gray-800 font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-sm"
+          className="w-full flex items-center justify-center py-3 border border-gray-300 bg-white text-gray-800 font-semibold rounded-lg hover:bg-gray-100 transition"
         >
           <img
-            src="https://img.icons8.com/color/48/000000/google-logo.png"
-            alt="Google Logo"
+            src="https://img.icons8.com/color/48/google-logo.png"
+            alt="Google"
             className="h-5 mr-2"
           />
           Continue with Google

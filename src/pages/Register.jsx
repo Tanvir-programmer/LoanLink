@@ -7,12 +7,8 @@ import { saveOrUpdateUser } from "../utils/utils";
 
 const Registration = () => {
   const navigate = useNavigate();
-  const {
-    createUser,
-    updateUserProfile,
-    setUser,
-    signInWithGoogle,
-  } = useContext(AuthContext);
+  const { createUser, updateUserProfile, setUser, signInWithGoogle } =
+    useContext(AuthContext);
 
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState("");
@@ -63,10 +59,14 @@ const Registration = () => {
       return toast.error("Password must be at least 6 characters.");
     }
     if (!/[A-Z]/.test(password)) {
-      return toast.error("Password must include at least one uppercase letter.");
+      return toast.error(
+        "Password must include at least one uppercase letter."
+      );
     }
     if (!/[a-z]/.test(password)) {
-      return toast.error("Password must include at least one lowercase letter.");
+      return toast.error(
+        "Password must include at least one lowercase letter."
+      );
     }
     if (!role) {
       return toast.error("Please select a role.");
