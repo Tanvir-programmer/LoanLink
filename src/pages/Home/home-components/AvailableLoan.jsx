@@ -26,7 +26,7 @@ const AvailableLoan = () => {
   }, [API_URL]);
 
   return (
-    <div className="my-10">
+    <div className="my-10 w-11/12 mx-auto">
       {/* ✅ HEADING (added back, no style changes elsewhere) */}
       <h2 className="text-4xl font-bold mb-6 text-primary text-center">
         Available Loan Options

@@ -5,12 +5,11 @@ import { FaMoneyBillWave, FaSearchDollar } from "react-icons/fa";
 const Hero = () => {
   const navigate = useNavigate();
 
-  const heroImageUrl =
-    "https://images.unsplash.com/photo-1556740758-9430ef899482?q=80&w=1974&auto=format&fit=crop";
+  const heroImageUrl = "https://i.ibb.co.com/VcQQg98W/bg-image.png";
 
   return (
     <section
-      className="relative w-full h-[55vh] md:h-[60vh] mt-6 rounded-xl overflow-hidden shadow-lg"
+      className="relative w-full h-[55vh] md:h-[60vh] overflow-hidden shadow-lg "
       style={{
         backgroundImage: `url(${heroImageUrl})`,
         backgroundSize: "cover",

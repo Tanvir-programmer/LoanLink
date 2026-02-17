@@ -68,14 +68,14 @@ const Navbar = () => {
   };
 
   const getNavLinkClass = ({ isActive }) =>
-    `flex items-center px-3 py-2 rounded-lg transition-colors duration-200 ${
+    `flex items-center px-3 py-2 rounded-lg transition-colors duration-200 font-bold text-white  ${
       isActive
         ? "text-primary font-bold bg-primary/10 border-b-2 border-primary"
         : "text-gray-600 hover:text-primary hover:bg-gray-100"
     }`;
 
   return (
-    <div className="bg-white shadow-lg sticky top-0 z-50">
+    <div className="bg-[#171d2e] shadow-lg sticky top-0 z-50">
       <div className="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20">
         {/* Logo Section */}
         <div className="navbar-start ">
@@ -108,7 +108,7 @@ const Navbar = () => {
 
             {/* The Typography */}
             <div className="flex flex-col leading-tight">
-              <span className="text-xl font-extrabold tracking-tighter text-[#0F172A] lg:text-2xl">
+              <span className="text-xl font-extrabold tracking-tighter text-white lg:text-2xl">
                 Loan<span className="text-blue-600">Link</span>
               </span>
               {/* <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-blue-500/80">
