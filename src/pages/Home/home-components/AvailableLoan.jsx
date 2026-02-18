@@ -31,9 +31,10 @@ const AvailableLoan = () => {
     <div className="my-16 w-11/12 mx-auto">
       {/* Heading */}
       <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-primary mb-3">
+        <h2 className="text-6xl font-bold text-black mb-3">
           Our Loan Services
         </h2>
+        <div className="w-24 h-1 bg-black mx-auto rounded-full mb-4"></div>
         <p className="text-gray-500 max-w-2xl mx-auto">
           Flexible and reliable financial solutions designed to help you achieve
           your goals with ease and confidence.

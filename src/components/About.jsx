@@ -144,7 +144,7 @@ const About = () => {
         {/* --- */}
 
         {/* Section 3: Call to Action (Focus on Trust) */}
-        <div className="bg-indigo-600 text-white p-10 rounded-xl text-center shadow-2xl">
+        <div className="bg-black text-white p-10 rounded-xl text-center shadow-2xl">
           <h2 className="text-4xl font-extrabold mb-4">
             Ready to Take the Next Step?
           </h2>
@@ -156,7 +156,7 @@ const About = () => {
             onClick={() => {
               navigate("/allloans");
             }}
-            className="py-3 px-8 bg-white text-indigo-700 font-bold rounded-lg shadow-xl hover:bg-gray-100 transition duration-200 text-lg"
+            className="py-3 px-8 bg-[#6055da] text-[#f0b100] font-bold rounded-lg shadow-xl hover:bg-[#4e43cb] transition duration-200 text-lg"
           >
             View All Loan Products
           </button>

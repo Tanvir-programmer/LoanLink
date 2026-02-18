@@ -29,8 +29,10 @@ const HowItWorks = () => {
   return (
     <div className="py-16">
       <div className="text-center mb-6">
-        <h2 className="text-4xl font-bold text-blue-600 mb-3">How It Works</h2>
-        <p className="text-gray-500 max-w-xl mx-auto">
+        <h2 className="text-6xl font-bold  mb-3">How It Works</h2>
+        <div className="w-24 h-1 bg-black mx-auto rounded-full mb-4"></div>
+
+        <p className="text-gray-500  max-w-xl mx-auto">
           Follow these simple steps to apply for a loan and receive approval.
         </p>
       </div>

@@ -9,8 +9,8 @@ const Home = () => {
     <div>
       <Hero></Hero>
       <AvailableLoan></AvailableLoan>
-      <HowItWorks></HowItWorks>
-      <FeedBack></FeedBack>
+      <HowItWorks className="w-11/12"></HowItWorks>
+      <FeedBack className="w-11/12"></FeedBack>
     </div>
   );
 };
