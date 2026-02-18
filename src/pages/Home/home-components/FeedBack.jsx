@@ -71,7 +71,7 @@ const FeedBack = () => {
   const prevReview = () => {
     setDirection(-1);
     setCurrentReviewIndex(
-      (prev) => (prev - 1 + mockReviews.length) % mockReviews.length
+      (prev) => (prev - 1 + mockReviews.length) % mockReviews.length,
     );
   };
 
@@ -210,7 +210,7 @@ const FeedBack = () => {
       </section>
 
       {/* 3. Key Statistics & Trust */}
-      <section className="p-8 rounded-xl bg-primary text-white shadow-xl">
+      <section className="p-8 rounded-xl bg-[#171d2e] text-white shadow-xl">
         <div className="text-center mb-10">
           <FaChartLine className="h-10 w-10 mx-auto mb-3 text-white" />
           <h2 className="text-3xl font-bold">Our Performance & Trust</h2>
@@ -219,15 +219,15 @@ const FeedBack = () => {
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          <div className="p-4 bg-primary/90 rounded-lg">
+          <div className="p-4 bg-[#6055da] text-yellow-500 rounded-lg">
             <p className="text-5xl font-extrabold">$250M+</p>
             <p className="mt-2 text-lg font-medium">Loans Disbursed</p>
           </div>
-          <div className="p-4 bg-primary/90 rounded-lg">
+          <div className="p-4 bg-[#6055da] text-yellow-500 rounded-lg">
             <p className="text-5xl font-extrabold">4.8/5</p>
             <p className="mt-2 text-lg font-medium">Average Client Rating</p>
           </div>
-          <div className="p-4 bg-primary/90 rounded-lg">
+          <div className="p-4 bg-[#6055da] text-yellow-500 rounded-lg">
             <p className="text-5xl font-extrabold">98%</p>
             <p className="mt-2 text-lg font-medium">Customer Satisfaction</p>
           </div>

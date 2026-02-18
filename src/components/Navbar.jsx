@@ -68,10 +68,10 @@ const Navbar = () => {
   };
 
   const getNavLinkClass = ({ isActive }) =>
-    `flex items-center px-3 py-2 rounded-lg transition-colors duration-200 font-bold text-white  ${
+    `flex items-center px-3 py-2 rounded-lg transition-colors duration-200 font-bold text-white ${
       isActive
         ? "text-primary font-bold bg-primary/10 border-b-2 border-primary"
-        : "text-gray-600 hover:text-primary hover:bg-gray-100"
+        : "max-md:bg-black text-white hover:text-primary hover:bg-gray-100"
     }`;
 
   return (
@@ -84,7 +84,7 @@ const Navbar = () => {
             className="group flex items-center gap-3 no-underline transition-all duration-300"
           >
             {/* The Icon: Using a sharp, modern indigo/blue gradient */}
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-[#0F172A] shadow-lg shadow-blue-200 group-hover:bg-blue-600 transition-colors duration-300">
+            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-[#0F172A] ring-1 ring-gray-600 group-hover:bg-blue-600 transition-colors duration-300">
               {/* Negative space LL icon */}
               <svg
                 viewBox="0 0 24 24"

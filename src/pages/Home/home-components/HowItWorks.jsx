@@ -5,21 +5,21 @@ const HowItWorks = () => {
   const steps = [
     {
       id: 1,
-      icon: <FaEdit className="text-primary w-12 h-12" />,
+      icon: <FaEdit className="text-white w-6 h-6" />,
       title: "Fill Out the Application",
       description:
         "Provide your personal information, income details, and the amount you want to borrow.",
     },
     {
       id: 2,
-      icon: <FaClipboardCheck className="text-primary w-12 h-12" />,
+      icon: <FaClipboardCheck className="text-white w-6 h-6" />,
       title: "Application Review",
       description:
         "Our loan officer reviews your application and verifies the information submitted.",
     },
     {
       id: 3,
-      icon: <FaCheckCircle className="text-primary w-12 h-12" />,
+      icon: <FaCheckCircle className="text-white w-6 h-6" />,
       title: "Get Approved",
       description:
         "Once approved, the funds are processed and released securely to your account.",
@@ -28,8 +28,8 @@ const HowItWorks = () => {
 
   return (
     <div className="py-16">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-bold text-primary mb-3">How It Works</h2>
+      <div className="text-center mb-6">
+        <h2 className="text-4xl font-bold text-blue-600 mb-3">How It Works</h2>
         <p className="text-gray-500 max-w-xl mx-auto">
           Follow these simple steps to apply for a loan and receive approval.
         </p>
@@ -39,19 +39,27 @@ const HowItWorks = () => {
         {steps.map((step) => (
           <div
             key={step.id}
-            className="bg-base-100 shadow-lg border rounded-xl p-8 text-center hover:shadow-2xl transition duration-300 relative"
+            className="group relative bg-white border border-gray-100 rounded-2xl p-8 text-center shadow-sm transition-all duration-300 hover:-translate-y-1"
           >
-            <div className="flex justify-center mb-6">{step.icon}</div>
+            {/* Background Step Number */}
+            <span className="absolute top-6 right-6 text-6xl font-bold text-gray-200 pointer-events-none select-none">
+              {step.id}
+            </span>
 
-            <h3 className="text-xl font-semibold text-base-content mb-3">
+            {/* Icon */}
+            <div className="mx-auto mb-6 w-16 h-16 bg-blue-600 text-blue-600 rounded-2xl flex items-center justify-center">
+              {step.icon}
+            </div>
+
+            {/* Title */}
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">
               {step.title}
             </h3>
 
-            <p className="text-gray-500">{step.description}</p>
-
-            <span className=" text-5xl font-bold text-gray-700 ">
-              {step.id}
-            </span>
+            {/* Description */}
+            <p className="text-gray-500 leading-relaxed text-sm">
+              {step.description}
+            </p>
           </div>
         ))}
       </div>

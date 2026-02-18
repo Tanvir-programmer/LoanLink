@@ -23,7 +23,7 @@ const Hero = () => {
       <div className="relative z-10 h-full flex items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 w-full">
           <div className="max-w-2xl text-white">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight">
               Smart Financing,
               <span className="block text-primary mt-1">
                 Built for Your Future
@@ -39,7 +39,7 @@ const Hero = () => {
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => navigate("/allloans")}
-                className="inline-flex items-center justify-center px-7 py-3 text-sm sm:text-base font-semibold rounded-lg bg-primary text-white shadow-md hover:bg-primary/90 transition"
+                className="inline-flex items-center cursor-pointer justify-center px-7 py-3 text-sm sm:text-base font-semibold rounded-lg bg-primary text-white shadow-md hover:bg-primary/90 transition"
               >
                 <FaMoneyBillWave className="mr-2" />
                 Apply Now
@@ -47,7 +47,7 @@ const Hero = () => {
 
               <button
                 onClick={() => navigate("/allloans")}
-                className="inline-flex items-center justify-center px-7 py-3 text-sm sm:text-base font-semibold rounded-lg border border-white/70 text-white hover:bg-white hover:text-gray-900 transition"
+                className="cursor-pointer inline-flex items-center justify-center px-7 py-3 text-sm sm:text-base font-semibold rounded-lg border border-white/70 text-white hover:bg-white hover:text-gray-900 transition"
               >
                 <FaSearchDollar className="mr-2" />
                 View All Loans
@@ -57,10 +57,10 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Scroll hint */}
+      {/* Scroll hint
       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-gray-300 text-xs tracking-wide opacity-80 hidden md:block">
         Scroll to explore ↓
-      </div>
+      </div> */}
     </section>
   );
 };
