@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AuthContext } from "./AuthContext"; // Import the context created above
+import { AuthContext } from "./AuthContext";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -14,7 +14,6 @@ import { auth } from "../firebase/firebase.init";
 const googleProvider = new GoogleAuthProvider();
 
 const AuthProvider = ({ children }) => {
-  // Ensure { children } is here
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,20 +30,26 @@ const AuthProvider = ({ children }) => {
   const signInWithGoogle = async () => {
     setLoading(true);
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      return result;
+      return await signInWithPopup(auth, googleProvider);
     } finally {
       setLoading(false);
     }
   };
 
-  const updateUserProfile = async (name, photoURL) => {
-    if (!auth.currentUser) return;
-    await updateProfile(auth.currentUser, {
-      displayName: name,
-      photoURL,
-    });
-    setUser({ ...auth.currentUser });
+  const updateUserProfile = async (name, photo) => {
+    setLoading(true);
+    try {
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, {
+          displayName: name,
+          photoURL: photo,
+        });
+        // Manually update state so the UI reflects changes immediately
+        setUser({ ...auth.currentUser, displayName: name, photoURL: photo });
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signOutUser = () => {
@@ -61,13 +66,13 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   const authInfo = {
+    user,
+    loading,
     createUser,
     signInUser,
     signInWithGoogle,
     updateUserProfile,
     signOutUser,
-    user,
-    loading,
     setUser,
   };
 

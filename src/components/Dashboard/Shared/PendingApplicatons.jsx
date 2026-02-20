@@ -7,6 +7,9 @@ const PendingApplications = () => {
   const [pendingLoans, setPendingLoans] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 1. New State for the Modal
+  const [selectedLoan, setSelectedLoan] = useState(null);
+
   useEffect(() => {
     fetchPendingLoans();
   }, []);
@@ -14,13 +17,12 @@ const PendingApplications = () => {
   const fetchPendingLoans = async () => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/loan-applications`
+        `${import.meta.env.VITE_API_URL}/loan-applications`,
       );
-      // Matches the "pending" status found in your MongoDB screenshot
       const pending = res.data.filter((loan) => loan.status === "pending");
       setPendingLoans(pending);
     } catch (error) {
-      toast.error(error);
+      toast.error("Failed to load applications");
     } finally {
       setLoading(false);
     }
@@ -30,20 +32,20 @@ const PendingApplications = () => {
     try {
       const updateData = {
         status: newStatus,
-        // Assignment requirement: log approvedAt timestamp on approval
-        approvedAt: newStatus === "Approved" ? new Date() : null,
+        approvedAt: newStatus === "Approved" ? new Date().toISOString() : null,
       };
 
       await axios.patch(
         `${import.meta.env.VITE_API_URL}/loan-applications/${id}`,
-        updateData
+        updateData,
       );
 
       toast.success(`Application ${newStatus} successfully!`);
-      // Optimistic UI update: remove from current list
       setPendingLoans((prev) => prev.filter((loan) => loan._id !== id));
+      // Close modal if it was open for this loan
+      setSelectedLoan(null);
     } catch (error) {
-      toast.error(error);
+      toast.error(error.response?.data?.error || "Update failed");
     }
   };
 
@@ -103,9 +105,11 @@ const PendingApplications = () => {
                 </td>
                 <td className="text-center">
                   <div className="flex justify-center gap-3">
+                    {/* 2. Added onClick to open Modal */}
                     <button
-                      title="View"
+                      onClick={() => setSelectedLoan(app)}
                       className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg"
+                      title="View"
                     >
                       <FaEye />
                     </button>
@@ -130,6 +134,87 @@ const PendingApplications = () => {
           </tbody>
         </table>
       </div>
+
+      {/* 3. The Details Modal */}
+      {selectedLoan && (
+        <div className="modal modal-open">
+          <div className="modal-box max-w-2xl bg-white">
+            <div className="flex justify-between items-center border-b pb-4">
+              <h3 className="font-bold text-xl text-gray-800">
+                Application Details
+              </h3>
+              <button
+                onClick={() => setSelectedLoan(null)}
+                className="btn btn-sm btn-circle btn-ghost"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 py-6">
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase">
+                  Full Name
+                </p>
+                <p className="text-gray-700 font-medium">
+                  {selectedLoan.firstName} {selectedLoan.lastName}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase">
+                  Email Address
+                </p>
+                <p className="text-gray-700 font-medium">
+                  {selectedLoan.userEmail}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase">
+                  Requested Amount
+                </p>
+                <p className="text-blue-600 font-bold text-lg">
+                  ${selectedLoan.loanAmount}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-400 uppercase">
+                  Application Date
+                </p>
+                <p className="text-gray-700 font-medium">
+                  {new Date(selectedLoan.application_date).toLocaleString()}
+                </p>
+              </div>
+              <div className="col-span-2 bg-gray-50 p-3 rounded-lg">
+                <p className="text-xs font-semibold text-gray-400 uppercase mb-1">
+                  Reason for Loan
+                </p>
+                <p className="text-gray-600 italic">
+                  "{selectedLoan.reason || "No reason provided"}"
+                </p>
+              </div>
+            </div>
+
+            <div className="modal-action">
+              <button
+                onClick={() => handleStatusUpdate(selectedLoan._id, "Rejected")}
+                className="btn btn-error btn-outline"
+              >
+                Reject
+              </button>
+              <button
+                onClick={() => handleStatusUpdate(selectedLoan._id, "Approved")}
+                className="btn btn-success text-white"
+              >
+                Approve Now
+              </button>
+            </div>
+          </div>
+          <div
+            className="modal-backdrop"
+            onClick={() => setSelectedLoan(null)}
+          ></div>
+        </div>
+      )}
     </div>
   );
 };
