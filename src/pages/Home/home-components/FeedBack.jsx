@@ -1,235 +1,274 @@
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import {
   FaQuoteLeft,
   FaStar,
   FaRegSmile,
   FaRegPaperPlane,
   FaChartLine,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
+import toast from "react-hot-toast";
 
-// Mock Data
-const mockReviews = [
-  {
-    id: 1,
-    name: "Aisha M.",
-    loanType: "Personal Loan",
-    rating: 5,
-    review: "Fast, transparent process. Highly recommend!",
-    date: "Dec 2025",
-  },
-  {
-    id: 2,
-    name: "Ben C.",
-    loanType: "Business Loan",
-    rating: 4,
-    review: "Great support, just slow document upload.",
-    date: "Nov 2025",
-  },
-  {
-    id: 3,
-    name: "Carlos R.",
-    loanType: "Home Equity",
-    rating: 5,
-    review: "Flawless experience. Trustworthy service.",
-    date: "Oct 2025",
-  },
-];
+// Animated Counter Component
+const Counter = ({ target, duration = 2, suffix = "" }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
 
-// Star Rating Component
-const StarRating = ({ rating }) => (
-  <div className="flex justify-center text-yellow-400">
+  useEffect(() => {
+    if (isInView) {
+      let start = 0;
+      const end = parseInt(target);
+      const totalMiliseconds = duration * 1000;
+      const incrementTime = totalMiliseconds / end;
+
+      const timer = setInterval(() => {
+        start += 1;
+        setCount(start);
+        if (start === end) clearInterval(timer);
+      }, incrementTime);
+
+      return () => clearInterval(timer);
+    }
+  }, [isInView, target, duration]);
+
+  return (
+    <span ref={ref}>
+      {count}
+      {suffix}
+    </span>
+  );
+};
+
+const StarRating = ({ rating, setRating, interactive = false }) => (
+  <div className="flex justify-center gap-1 text-yellow-400">
     {[...Array(5)].map((_, i) => (
       <FaStar
         key={i}
-        className={`h-5 w-5 ${
-          i < rating ? "text-yellow-400" : "text-gray-300"
-        }`}
+        onClick={() => interactive && setRating(i + 1)}
+        className={`h-5 w-5 transition-all ${
+          i < rating ? "text-yellow-400 scale-110" : "text-gray-300"
+        } ${interactive ? "cursor-pointer hover:scale-125" : ""}`}
       />
     ))}
   </div>
 );
 
 const FeedBack = () => {
+  // Initial Reviews State
+  const [reviews, setReviews] = useState([
+    {
+      id: 1,
+      name: "Aisha M.",
+      loanType: "Personal Loan",
+      rating: 5,
+      review:
+        "The speed of approval was genuinely surprising. I had the funds in my account within 24 hours. A truly modern lending experience!",
+    },
+    {
+      id: 2,
+      name: "Ben C.",
+      loanType: "Business Loan",
+      rating: 4,
+      review:
+        "Excellent support team. They walked me through the commercial terms clearly. The document portal is very secure.",
+    },
+    {
+      id: 3,
+      name: "Carlos R.",
+      loanType: "Home Equity",
+      rating: 5,
+      review:
+        "Transparent rates and no hidden fees. LoanLink helped me consolidate my debt with zero stress. Highly professional.",
+    },
+  ]);
+
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
   const [direction, setDirection] = useState(1);
+  const [userRating, setUserRating] = useState(0);
 
-  // Dynamic carousel: auto-slide every 5 seconds
+  // Auto-slide logic
   useEffect(() => {
     const interval = setInterval(() => {
       setDirection(1);
-      setCurrentReviewIndex((prev) => (prev + 1) % mockReviews.length);
-    }, 5000);
+      setCurrentReviewIndex((prev) => (prev + 1) % reviews.length);
+    }, 6000);
     return () => clearInterval(interval);
-  }, []);
+  }, [reviews.length]);
 
-  // Manual navigation
   const nextReview = () => {
     setDirection(1);
-    setCurrentReviewIndex((prev) => (prev + 1) % mockReviews.length);
+    setCurrentReviewIndex((prev) => (prev + 1) % reviews.length);
   };
   const prevReview = () => {
     setDirection(-1);
     setCurrentReviewIndex(
-      (prev) => (prev - 1 + mockReviews.length) % mockReviews.length,
+      (prev) => (prev - 1 + reviews.length) % reviews.length,
     );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Thank you for your valuable feedback!");
+    const name = e.target.name.value || "Anonymous";
+    const feedbackText = e.target.feedback.value;
+
+    if (userRating === 0) {
+      toast.error("Please provide a star rating.");
+      return;
+    }
+
+    const newFeedback = {
+      id: Date.now(),
+      name: name,
+      loanType: "New",
+      rating: userRating,
+      review: feedbackText,
+    };
+
+    // Add new feedback to the list
+    setReviews([newFeedback, ...reviews]);
+    setCurrentReviewIndex(0); // Show the new feedback immediately
+
+    toast.success("Feedback submitted! Thank you very much");
     e.target.reset();
+    setUserRating(0);
   };
 
-  const currentReview = mockReviews[currentReviewIndex];
+  const currentReview = reviews[currentReviewIndex];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
       {/* 1. Customer Feedback Carousel */}
-      <section className="bg-white p-8 rounded-xl shadow-2xl border-t-4 border-primary/50">
-        <div className="text-center mb-10">
-          <FaRegSmile className="h-10 w-10 text-primary mx-auto mb-3" />
-          <h2 className="text-3xl font-bold text-gray-800">
-            What Our Clients Say
+      <section className="relative">
+        <div className="text-center mb-12">
+          <span className="text-primary font-semibold tracking-widest uppercase text-sm">
+            Testimonials
+          </span>
+          <h2 className="text-4xl font-extrabold text-gray-900 mt-2">
+            Trusted by Thousands
           </h2>
-          <p className="text-gray-500 mt-2">
-            Hear real stories from people who used LoanLink.
-          </p>
+          <div className="h-1 w-20 bg-primary mx-auto mt-4 rounded-full"></div>
         </div>
 
-        <div className="relative max-w-3xl mx-auto">
+        <div className="relative max-w-4xl mx-auto px-12">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentReviewIndex}
-              initial={{ opacity: 0, x: direction > 0 ? 100 : -100 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: direction > 0 ? -100 : 100 }}
-              transition={{ duration: 0.5 }}
-              className="bg-gray-50 p-6 sm:p-10 rounded-lg text-center"
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+              transition={{ duration: 0.4 }}
+              className="bg-white border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-8 sm:p-14 rounded-3xl text-center relative"
             >
-              <FaQuoteLeft className="h-8 w-8 text-primary/70 mb-4 mx-auto" />
+              <FaQuoteLeft className="absolute top-8 left-8 h-10 w-10 text-gray-100" />
               <StarRating rating={currentReview.rating} />
-              <blockquote className="mt-4 text-lg italic text-gray-700">
+              <blockquote className="mt-8 text-xl sm:text-2xl leading-relaxed font-medium text-gray-800 italic">
                 "{currentReview.review}"
               </blockquote>
-              <p className="mt-4 font-semibold">{currentReview.name}</p>
-              <p className="text-sm text-primary">
-                {currentReview.loanType} Customer
-              </p>
+              <div className="mt-8">
+                <p className="font-bold text-lg text-gray-900">
+                  {currentReview.name}
+                </p>
+                <p className="text-primary font-medium">
+                  {currentReview.loanType} Customer
+                </p>
+              </div>
             </motion.div>
           </AnimatePresence>
 
-          {/* Navigation buttons */}
           <button
             onClick={prevReview}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100"
+            className="absolute left-0 top-1/2 -translate-y-1/2 bg-white text-gray-400 hover:text-primary p-4 rounded-full shadow-lg transition-all active:scale-90"
           >
-            &larr;
+            <FaChevronLeft />
           </button>
           <button
             onClick={nextReview}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-100"
+            className="absolute right-0 top-1/2 -translate-y-1/2 bg-white text-gray-400 hover:text-primary p-4 rounded-full shadow-lg transition-all active:scale-90"
           >
-            &rarr;
+            <FaChevronRight />
           </button>
         </div>
       </section>
 
       {/* 2. Feedback Submission Form */}
-      <section className="bg-gray-100 p-8 rounded-xl shadow-inner">
-        <div className="text-center mb-10">
-          <FaRegPaperPlane className="h-10 w-10 text-secondary mx-auto mb-3" />
-          <h2 className="text-3xl font-bold text-gray-800">
+      <section className="grid md:grid-cols-2 gap-12 items-center bg-gray-50 rounded-[2rem] overflow-hidden border border-gray-200">
+        <div className="p-8 lg:p-16">
+          <div className="inline-flex items-center justify-center p-3 bg-white shadow-sm rounded-xl mb-6">
+            <FaRegPaperPlane className="h-6 w-6 text-primary" />
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900">
             Share Your Experience
           </h2>
-          <p className="text-gray-600 mt-2">
-            Help us improve by submitting your honest feedback.
+          <p className="text-gray-600 mt-4 text-lg">
+            Your insights help us refine our lending process.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Name (Optional)
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white p-8 lg:p-12 shadow-xl space-y-5"
+        >
+          <div className="flex flex-col items-center mb-4">
+            <label className="text-sm font-semibold text-gray-500 uppercase mb-2">
+              Tap to Rate
             </label>
-            <input
-              type="text"
-              id="name"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:ring-primary focus:border-primary"
-              placeholder="John Doe"
+            <StarRating
+              rating={userRating}
+              setRating={setUserRating}
+              interactive
             />
           </div>
-
-          <div>
-            <label
-              htmlFor="rating"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Rating
-            </label>
-            <select
-              id="rating"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:ring-primary focus:border-primary bg-white"
-            >
-              <option value="">Select a rating</option>
-              <option value="5">5 Stars - Excellent</option>
-              <option value="4">4 Stars - Very Good</option>
-              <option value="3">3 Stars - Good</option>
-              <option value="2">2 Stars - Fair</option>
-              <option value="1">1 Star - Poor</option>
-            </select>
-          </div>
-
-          <div>
-            <label
-              htmlFor="feedback"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Your Feedback
-            </label>
-            <textarea
-              id="feedback"
-              rows="4"
-              required
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:ring-primary focus:border-primary"
-              placeholder="Tell us about your application, approval, or service experience..."
-            ></textarea>
-          </div>
-
+          <input
+            name="name"
+            type="text"
+            className="w-full bg-gray-50 border-none rounded-xl p-4 outline-none text-gray-800"
+            placeholder="Full Name (Optional)"
+          />
+          <textarea
+            name="feedback"
+            rows="4"
+            required
+            className="w-full bg-gray-50 border-none rounded-xl p-4 outline-none text-gray-800"
+            placeholder="Tell us about your experience..."
+          />
           <button
             type="submit"
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
+            className="w-full py-4 px-6 rounded-xl text-lg font-bold text-white bg-primary hover:bg-primary/90 shadow-lg transition-all active:scale-[0.98]"
           >
             Submit Feedback
           </button>
         </form>
       </section>
 
-      {/* 3. Key Statistics & Trust */}
-      <section className="p-8 rounded-xl bg-[#171d2e] text-white shadow-xl">
-        <div className="text-center mb-10">
-          <FaChartLine className="h-10 w-10 mx-auto mb-3 text-white" />
-          <h2 className="text-3xl font-bold">Our Performance & Trust</h2>
-          <p className="mt-2 text-primary-200">
-            Building confidence through verified numbers.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          <div className="p-4 bg-[#6055da] text-yellow-500 rounded-lg">
-            <p className="text-5xl font-extrabold">$250M+</p>
-            <p className="mt-2 text-lg font-medium">Loans Disbursed</p>
+      {/* 3. Key Statistics with Counter */}
+      <section className="p-12 rounded-[2.5rem] bg-[#171d2e] text-white relative overflow-hidden">
+        <div className="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="space-y-2 border-l-2 border-primary/30 pl-6">
+            <p className="text-primary font-bold tracking-tighter text-5xl">
+              $<Counter target="250" suffix="M+" />
+            </p>
+            <p className="text-gray-400 text-sm font-semibold uppercase">
+              Total Capital Disbursed
+            </p>
           </div>
-          <div className="p-4 bg-[#6055da] text-yellow-500 rounded-lg">
-            <p className="text-5xl font-extrabold">4.8/5</p>
-            <p className="mt-2 text-lg font-medium">Average Client Rating</p>
+          <div className="space-y-2 border-l-2 border-primary/30 pl-6">
+            <p className="text-primary font-bold tracking-tighter text-5xl">
+              <Counter target="5" suffix=".0/5" duration={1} />
+            </p>
+            <p className="text-gray-400 text-sm font-semibold uppercase">
+              Trustpilot Rating
+            </p>
           </div>
-          <div className="p-4 bg-[#6055da] text-yellow-500 rounded-lg">
-            <p className="text-5xl font-extrabold">98%</p>
-            <p className="mt-2 text-lg font-medium">Customer Satisfaction</p>
+          <div className="space-y-2 border-l-2 border-primary/30 pl-6">
+            <p className="text-primary font-bold tracking-tighter text-5xl">
+              <Counter target="98" suffix="%" />
+            </p>
+            <p className="text-gray-400 text-sm font-semibold uppercase">
+              Retention Rate
+            </p>
           </div>
         </div>
       </section>

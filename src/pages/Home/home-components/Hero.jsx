@@ -9,7 +9,7 @@ const Hero = () => {
 
   return (
     <section
-      className="relative w-full h-[55vh] md:h-screen overflow-hidden shadow-lg "
+      className="relative w-full min-h-[60vh] md:h-screen overflow-hidden shadow-lg flex items-center"
       style={{
         backgroundImage: `url(${heroImageUrl})`,
         backgroundSize: "cover",
@@ -17,50 +17,45 @@ const Hero = () => {
       }}
     >
       {/* Professional gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/70 to-gray-900/40"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-gray-900/95 via-gray-900/80 to-gray-900/40"></div>
 
       {/* Content */}
-      <div className="relative z-10 h-full flex items-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 w-full">
+      <div className="relative z-10 w-full py-16 md:py-0">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 w-full">
           <div className="max-w-2xl text-white">
-            <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight">
+            <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1]">
               Smart Financing,
-              <span className="block text-primary mt-1">
+              <span className="block text-primary mt-2">
                 Built for Your Future
               </span>
             </h1>
 
-            <p className="mt-5 text-sm sm:text-base text-gray-200 leading-relaxed">
+            <p className="mt-6 text-base sm:text-lg text-gray-200 leading-relaxed max-w-lg">
               Apply for trusted loan solutions through a secure, transparent,
               and fully digital process — designed for speed and clarity.
             </p>
 
             {/* CTA buttons */}
-            <div className="mt-8 flex flex-col sm:flex-row gap-4">
+            <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => navigate("/allloans")}
-                className="inline-flex items-center cursor-pointer justify-center px-7 py-3 text-sm sm:text-base font-semibold rounded-lg bg-primary text-white shadow-md hover:bg-primary/90 transition"
+                className="inline-flex items-center cursor-pointer justify-center px-8 py-4 text-base font-semibold rounded-lg bg-primary text-white shadow-lg hover:bg-primary/90 transition-all active:scale-95"
               >
-                <FaMoneyBillWave className="mr-2" />
+                <FaMoneyBillWave className="mr-2 text-xl" />
                 Apply Now
               </button>
 
               <button
                 onClick={() => navigate("/allloans")}
-                className="cursor-pointer inline-flex items-center justify-center px-7 py-3 text-sm sm:text-base font-semibold rounded-lg border border-white/70 text-white hover:bg-white hover:text-gray-900 transition"
+                className="cursor-pointer inline-flex items-center justify-center px-8 py-4 text-base font-semibold rounded-lg border border-white/50 text-white backdrop-blur-sm hover:bg-white hover:text-gray-900 transition-all active:scale-95"
               >
-                <FaSearchDollar className="mr-2" />
+                <FaSearchDollar className="mr-2 text-xl" />
                 View All Loans
               </button>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Scroll hint
-      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-gray-300 text-xs tracking-wide opacity-80 hidden md:block">
-        Scroll to explore ↓
-      </div> */}
     </section>
   );
 };
