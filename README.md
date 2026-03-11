@@ -1,16 +1,64 @@
-# React + Vite
+LoanLink – Microfinance Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+LoanLink is a role-based microfinance management web application designed to help microfinance organizations manage loans, users, and transactions efficiently. The system allows different users such as Admin, Staff, and Clients to perform actions based on their roles.
 
-Currently, two official plugins are available:
+This project demonstrates modern web development practices including authentication, role-based authorization, API integration, and dynamic UI.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🚀 Features
 
-## React Compiler
+🔐 Authentication System
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Secure login and registration
 
-## Expanding the ESLint configuration
+Role-based access control
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+👤 User Roles
+
+Admin – Manage users, loans, and system settings
+
+Staff – Process loan applications and manage clients
+
+Client – Apply for loans and track loan status
+
+💰 Loan Management
+
+Apply for loans
+
+Approve or reject loan requests
+
+Track loan status
+
+📊 Dashboard
+
+Role-based dashboards
+
+View loan statistics and activities
+
+🔎 Search & Filter
+
+Search users or loans
+
+Filter loan status
+
+📱 Responsive Design
+
+Works on desktop, tablet, and mobile devices
+
+🛠️ Tech Stack
+
+Frontend
+
+React.js
+Tailwind CSS
+
+Backend / API
+
+Node js
+Express js
+Mongodb
+REST API
+Other Tools
+
+Git & GitHub
+Netlify (Deployment)
+Vercel (Deployment)
